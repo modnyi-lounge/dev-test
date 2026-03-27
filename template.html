@@ -27,7 +27,6 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            -webkit-overflow-scrolling: touch; /* Улучшает плавность скролла на старых iOS */
         }
         
         header { 
@@ -45,23 +44,21 @@
 
         .sticky-header {
             position: sticky;
-            position: -webkit-sticky;
             top: 0;
-            z-index: 9999 !important;
+            z-index: 200;
             background: var(--bg);
+            overflow: visible;
+            /* position: -webkit-sticky;
             margin: 0;
             padding-top: 1px;
             margin-top: -1px;
             isolation: isolate;
             background-clip: padding-box;
-            /* Важно для iOS Safari: overflow видим по умолчанию, но явно укажем */
-            overflow: visible;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
-            /* Изолируем шапку для View Transitions API */
-            view-transition-name: main-header;
+            view-transition-name: main-header; */
         }
 
         .main-tabs {
@@ -335,10 +332,6 @@
     <script>
         const menuItems = {items_json};  // Массив, который заполняем
 
-        // Добавляем объект для хранения позиций скролла
-        let scrollPositions = { food: 0, bar: 0 };
-        let currentTab = 'food';
-
         // Делегирование событий для клика по табам, карточкам и навигации
         document.addEventListener('click', (e) => {
             const tabBtn = e.target.closest('[data-tab-trigger]');
@@ -380,13 +373,9 @@
 
             // Если нажали на уже активный таб — скроллим наверх
             if (isAlreadyActive) {
-                window.scrollTo({ top: 50, behavior: 'smooth' });
-                scrollPositions[tabName] = 50;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 return;
             }
-
-            // Сохраняем текущую позицию скролла ПЕРЕД переключением
-            scrollPositions[currentTab] = window.scrollY;
 
             // Используем View Transitions API если доступно
             if (document.startViewTransition) {
@@ -410,29 +399,10 @@
                 item.style.display = item.getAttribute('data-tab') === tabName ? 'inline-block' : 'none';
             });
 
-            // Обновляем переменную текущего таба
-            currentTab = tabName;
-
-            // Даём браузеру время на отрисовку sticky header перед скроллом
             setTimeout(() => {
-                let targetScroll = scrollPositions[tabName];
-
-                // Проверяем: уходим из таба, где прокручено много (> 49px)
-                // И идем в таб, где прокручено мало (< 49px)
-                if (window.scrollY > 49 && targetScroll < 49) {
-                    targetScroll = 50;
-                }
-
-                // Мгновенный скролл к вычисленной позиции
-                // window.scrollTo({
-                //     top: targetScroll,
-                //     behavior: 'auto'
-                // });
-
-                // Сразу после скролла обновляем координаты категорий
                 updateOffsets();
                 highlightNav();
-            }, 50); // 50ms достаточно для отрисовки
+            }, 50);
         }
 
         let categoryOffsets = [];

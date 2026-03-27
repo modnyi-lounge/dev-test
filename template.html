@@ -42,14 +42,15 @@
             top: 0;
             z-index: 100;
             background: var(--bg);
-            /* Принудительное создание композитного слоя для iOS Safari */
+            /* Важно для iOS Safari: overflow видим по умолчанию, но явно укажем */
+            overflow: visible;
             will-change: transform;
-            contain: layout style paint;
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            /* Убираем мерцание при переключении */
-            backface-visibility: hidden;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
             -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            /* Изолируем шапку для View Transitions API */
+            view-transition-name: main-header;
         }
 
         .main-tabs {

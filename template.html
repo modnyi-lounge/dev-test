@@ -21,7 +21,7 @@
             --radius: 18px; 
             --inactive: #8c7f70;
         }
-        html { scroll-behavior: smooth; }
+        /* html { scroll-behavior: smooth; } */
         body { font-family: -apple-system, system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         
         header { 
@@ -341,7 +341,7 @@
             const isAlreadyActive = clickedBtn.classList.contains('active');
 
             if (isAlreadyActive) {
-                // Если таб уже активен — скроллим наверх с анимацией
+                // Если таб уже активен — скроллим наверх
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 return;
             }
@@ -364,7 +364,7 @@
 
             // Восстанавливаем позицию скролла для нового таба (или 0, если там ещё не были)
             const savedPosition = tabScrollPositions[tabName] || 0;
-            window.scrollTo({ top: savedPosition, behavior: 'instant' });
+            window.scrollTo({ top: savedPosition, behavior: 'auto' });
 
             // Обновляем расчеты для активной категории
             setTimeout(() => {

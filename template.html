@@ -42,12 +42,6 @@
             top: 0;
             z-index: 100;
             background: var(--bg);
-            will-change: transform;
-            transform: translate3d(0,0,0);
-            -webkit-transform: translate3d(0,0,0);
-            /* background: rgba(250, 247, 242, 0.97); */
-            /* backdrop-filter: blur(12px); Размытие в стиле iOS */
-            /* padding-top: 15px; */
         }
 
         .main-tabs {
@@ -359,15 +353,24 @@
             document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
             document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
 
-            // Обновляем текущий таб
+            // Обновляем переменную текущего таба
             currentTab = tabName;
 
-            // Устраняем глитчи Safari через двойной кадр анимации
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    // Мгновенный скролл к сохраненной позиции
+                    
+                    let targetScroll = scrollPositions[tabName]; // Берем сохраненный скролл нового таба
+
+                    // Проверяем: уходим из таба, где прокручено много (> 49px)
+                    // И идем в таб, где прокручено мало (< 49px)
+                    if (window.scrollY > 49 && targetScroll < 49) {
+                        targetScroll = 50; // Принудительно ставим 50px, чтобы скрыть логотип и избежать глитча
+                    }
+                    // --------------------------
+
+                    // Мгновенный скролл к вычисленной позиции
                     window.scrollTo({ 
-                        top: scrollPositions[tabName], 
+                        top: targetScroll, 
                         behavior: 'auto' 
                     });
 

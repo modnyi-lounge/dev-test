@@ -326,34 +326,46 @@
     <script>
         const menuItems = {items_json};  // Массив, который заполняем
 
+        // Хранилище позиций скролла для каждого таба
+        const tabScrollPositions = {
+            food: 0,
+            bar: 0
+        };
+
         function switchTab(tabName, clickedBtn) {
+            // Сохраняем текущую позицию скролла для активного таба
+            const currentTab = document.querySelector('.main-tab.active').textContent === 'Кухня' ? 'food' : 'bar';
+            tabScrollPositions[currentTab] = window.scrollY;
+
             // Проверяем, нажат ли уже активный таб
             const isAlreadyActive = clickedBtn.classList.contains('active');
-        
+
             if (isAlreadyActive) {
+                // Если таб уже активен — скроллим наверх с анимацией
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                return; // Прерываем выполнение, так как переключать ничего не нужно
+                return;
             }
-        
+
             // Если это новый таб — выполняем логику переключения
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
             clickedBtn.classList.add('active');
-        
+
             // Показываем нужные ссылки в скроллере и скрываем ненужные
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.style.display = item.getAttribute('data-tab') === tabName ? 'inline-block' : 'none';
             });
-        
+
             // Сбрасываем скролл горизонтального меню в начало
             document.getElementById('nav-scroller').scrollLeft = 0;
-        
+
             // Показываем нужный контент исходя из активного таба
             document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
             document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
-        
-            // переход наверх при смене таба
-            window.scrollTo({ top: 0, behavior: 'auto' });
-        
+
+            // Восстанавливаем позицию скролла для нового таба (или 0, если там ещё не были)
+            const savedPosition = tabScrollPositions[tabName] || 0;
+            window.scrollTo({ top: savedPosition, behavior: 'instant' });
+
             // Обновляем расчеты для активной категории
             setTimeout(() => {
                 updateOffsets();

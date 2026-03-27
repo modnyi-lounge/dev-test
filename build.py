@@ -50,19 +50,19 @@ def build():
         nav_html += f'<a href="#{cat_id}" class="nav-item" data-tab="{tab_key}" {display_style}>{cat_name}</a>'
         
         section_html = f'<h2 id="{cat_id}" class="category-title">{cat_name}</h2>\n<div class="menu-grid">'
-
+        
         for item in cat_items:
             price_val = item.get('price', '').strip()
             price_html = f'<div class="product-price">{price_val} ₽</div>' if price_val else ''
-
+            
             img_url = item.get('img', '').strip()
             img_id = get_drive_id(img_url)
-
+            
             if img_id:
                 # Проверяем, существуют ли файлы физически в репозитории
                 t_path = f"assets/img/thumbs/{img_id}.webp"
                 f_path = f"assets/img/full/{img_id}.webp"
-
+                
                 item['img_thumb'] = t_path
                 item['img_full'] = f_path
 
@@ -75,7 +75,7 @@ def build():
                 card_class = "product-card no-image"
 
             section_html += f'''
-            <div class="{card_class}" data-index="{global_idx}">
+            <div class="{card_class}" onclick="openModal({global_idx})">
                 {img_tag}
                 <div class="product-info">
                     <div class="product-title">{item['name']}</div>

@@ -42,6 +42,14 @@
             top: 0;
             z-index: 100;
             background: var(--bg);
+            /* Принудительное создание композитного слоя для iOS Safari */
+            will-change: transform;
+            contain: layout style paint;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            /* Убираем мерцание при переключении */
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
 
         .main-tabs {

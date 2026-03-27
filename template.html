@@ -63,17 +63,6 @@
             /* Изолируем шапку для View Transitions API */
             view-transition-name: main-header;
         }
-        /* Фикс для предотвращения "просвечивания" контента сверху */
-        .sticky-header::before {
-            content: '';
-            position: absolute;
-            top: -100px; /* Заглушка выше экрана */
-            left: 0;
-            right: 0;
-            height: 100px;
-            background: var(--bg);
-            z-index: -1;
-        }
 
         .main-tabs {
             display: flex;
@@ -435,10 +424,10 @@
                 }
 
                 // Мгновенный скролл к вычисленной позиции
-                window.scrollTo({
-                    top: targetScroll,
-                    behavior: 'auto'
-                });
+                // window.scrollTo({
+                //     top: targetScroll,
+                //     behavior: 'auto'
+                // });
 
                 // Сразу после скролла обновляем координаты категорий
                 updateOffsets();

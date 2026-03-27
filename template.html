@@ -6,7 +6,7 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#faf7f2">
     <link rel="apple-touch-icon" href="assets/icon-192x192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Modnyi Menu">
     <title>Модный Lounge Bar</title>
@@ -195,7 +195,11 @@
             padding-top: 5px;
         }
         
-        .weight-badge { color: #8c7f70; font-size: 14px; margin: 5px 0 12px;}
+        .weight-badge {
+            color: var(--inactive);
+            font-size: 14px;
+            margin: 5px 0 12px;
+        }
         
         .close-btn { 
             position: absolute; top: 16px; right: 16px; 
@@ -218,6 +222,63 @@
             color: var(--text);
             cursor: pointer;
         }
+
+        /* Footer Styles */
+        footer {
+            padding: 40px 20px 60px;
+            text-align: center;
+            background: var(--bg);
+            border-top: 1px solid var(--nav-bg);
+            margin-top: 20px;
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--text);
+            opacity: 0.85;
+            text-decoration: none;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 25px;
+            transition: color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .download-btn:active {
+            color: var(--text);
+            opacity: 0.6;
+        }
+        .download-icon {
+            width: 18px;
+            height: 18px;
+            fill: var(--text);
+            transition: fill 0.2s ease;
+        }
+        .download-btn:active .download-icon {
+            color: var(--text);
+            opacity: 0.6;
+        }
+        .footer-phone {
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .footer-warning {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.25;
+            max-width: 320px;
+            margin: 0 auto;
+            font-weight: 500;
+            opacity: 0.85;
+        }
     </style>
 </head>
 <body>
@@ -238,9 +299,19 @@
         <div id="content-bar" style="display: none;">{sections_bar}</div>
     </div>
 
-    <!-- <footer>
-        <a href="menu.pdf" target="_blank" class="download-btn">Скачать меню в PDF</a>
-    </footer> -->
+    <footer>
+        <a href="menu_text.pdf" target="_blank" class="download-btn">
+            <svg class="download-icon" viewBox="0 0 24 24">
+                <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/>
+            </svg>
+            Скачать меню (PDF)
+        </a>
+        <a href="tel:+79888886889" class="footer-phone">+7 988 888-68-89</a>
+        <p class="footer-warning">
+            Просим бережно относиться к планшету. <br>
+            При повреждении устройства взимается компенсация — 15 000 ₽
+        </p>
+    </footer>
     
     <div id="modal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">

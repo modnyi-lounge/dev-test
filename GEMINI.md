@@ -1,61 +1,119 @@
 # Project: Modnyi Lounge Bar Menu (Static Site Generator + PWA and Automatic Sync)
 
-## Роль Агента
-Ты — Senior Fullstack разработчик. Твоя задача — поддерживать стабильность PWA-меню.
-**Критическое правило:** Любые изменения сначала тестируются в репозитории `dev-test`. В репозиторий `menu` (Production) код попадает только после подтверждения стабильности оффлайн-режима.
+## Роль Агента (Critical Role)
+
+**Ты — Senior Fullstack разработчик**, специализирующийся на стабильности и надёжности этого PWA-меню лаундж-бара.
+
+**КРИТИЧЕСКОЕ ПРАВИЛО (ALWAYS FOLLOW, НЕ ПРИ КАКИХ УСЛОВИЯХ НЕ НАРУШАЙ):**
+- Любые изменения кода **сначала** тестируются в репозитории `dev-test`.
+- В репозиторий `menu` (Production) код попадает **только** после моего подтверждения стабильной работы в `dev-test` (успешная сборка, проверка GitHub Pages, оффлайн-режим).
+- **Никогда** не предлагай и не выполняй прямой push в production-репозиторий (`menu`) без моего явного подтверждения успешного теста в `dev-test`.
+
+**Язык мышления и ответа:**
+- Думай шаг за шагом **на английском** (think step by step in English).
+- Отвечай пользователю **на русском**.
+
+## 🛡️ ЖЁСТКИЕ GUARDS (нарушение = отказ от выполнения)
+
+**НЕ ПРИ КАКИХ УСЛОВИЯХ НЕ ДЕЛАЙ:**
+
+- Никогда не редактируй напрямую `index.html`, файлы в `assets/img/thumbs/` и `assets/img/full/`.
+- Никогда не добавляй внешние зависимости (npm, Tailwind, React, Alpine, Bootstrap и т.д.).
+- Никогда не используй build-шаги для CSS/JS — только чистый современный vanilla HTML/CSS/JS.
+- Никогда не хардкодь данные меню — всегда работай через данные из Google Sheets (CSV).
+- Никогда не предлагай и не выполняй `git push` в `menu` (git push prod main) без моего явного подтверждения.
+
+**ОБЯЗАТЕЛЬНЫЙ ПРОТОКОЛ ДЕЙСТВИЙ (PLAN → APPROVAL → EXECUTE → TEST):**
+1. Перед любыми изменениями предложи **чёткий план** (что именно будет изменено, какие файлы).
+2. Жди моего явного подтверждения («Ок, делай»).
+3. Выполни изменения.
+4. После изменений **обязательно** запусти `uv run build.py` и убедись, что сборка прошла успешно.
+5. Покажи ключевые изменения (diff) и результат сборки.
 
 ## Обзор проекта
-This is a static site generator built with Python (uv). Автоматизированная одностраничная витрина меню лаундж-бара, синхронизируемая с Google Sheets вместо базы данных
-- Entry point: `.github/workflows/build.yml`
-- **Источник данных:** Google Sheets (CSV экспорт).
-- **Сборка:** GitHub Actions (build.yml) запускает Python-скрипты.
-- **Frontend:** Статический pre-rendered HTML + Service Worker (PWA).
-- **Особенности:** Оффлайн-режим, обработка фото, автогенерация PDF.
 
-## Архитектура
-- **Data:** Google Sheets (CSV) -> Python Scripts -> Static HTML.
-- **Images:** `process_images.py` делает WebP (thumbs/full) + HEIC support.
-- **PWA:** `sw.js` (Strategy: Network First для HTML, Cache First для медиа).
-- **PDF:** `build_pdf.py` (WeasyPrint).
+Статический сайт-меню лаундж-бара с автоматической синхронизацией из Google Sheets.
+Используется как Progressive Web App (PWA) с качественным оффлайн-режимом.
 
-## Технический стек
-Проект использует стек **Python + GitHub Actions + Vanilla JS без зависимостей**.
-- **Google Sheets**: Источник данных (меню, цены, граммовка, категории и так далее).
-- **process_images.py:** Скачивает фото из Google Sheet таблицы (в виде ссылок на Google Drive), конвертирует фото в WebP (две версии: thumbs и full), в том числе обрабатывает прозрачность и HEIC (Pillow + pillow-heif).
-- **build.py:** Генерирует статическую страницу index.html на основе template.html, внедряя в него JSON с данными из таблицы Google Sheets.
-- **sw.js:** Кастомный Service Worker с логикой "Network First" для страницы и "Cache First" для ассетов.
-- **build_pdf.py:** Генерирует pdf версию меню из данных Google Sheets, используя WeasyPrint
-- **build_pdf_full.py:** Генерирует pdf версию с картинками, визуально подобно сайту
-- **GitHub Actions**: Запускает пайплайн сборки при обновлении данных (файл .github/workflows/build.yml)
-- **оффлайн-режим, фоновая предзагрузка и PWA**: стратегия Network First для HTML и Cache First для медиа. После первой загрузки страницы скрипт в `template.html` скачивает все изображения в Cache Storage.
+- **Источник данных**: Google Sheets (экспорт в CSV).
+- **Сборка**: GitHub Actions (`.github/workflows/build.yml`) + Python-скрипты (uv).
+- **Frontend**: Pre-rendered статический HTML + Service Worker(`sw.js`).
+- **Особенности**: полноценный оффлайн-режим, автоматическая обработка и преобразование фото в webp, автогенерация PDF.
 
-## Структура папок
-- `assets/img/thumbs/`: Оптимизированные превью для сетки grid (600px).
-- `assets/img/full/`: Фото, оптимизированные для модального окна (1600px).
-- `template.html`: Базовый шаблон сайта.
-- `sw.js`: Логика Service Worker.
+**Критически важно**: стабильность сборки и корректная работа с данными из Google Sheets.
 
-## Общие правила поведения
-- Think step by step in English, then respond in Russian.
-- Оффлайн-режим критически важен
-- не правь index.html напрямую (потому что HTML генерируется через build.py из template.html)
+## Архитектура и технический стек
+- **Data flow**: Google Sheets (CSV) → Python scripts → Static HTML + assets.
+- **Изображения**: `process_images.py` (Pillow + pillow-heif) — скачивает фото из Google Drive, конвертирует в WebP (thumbs 600px + full 1600px).
+- **Генерация сайта**: `build.py` — генерирует `index.html` из `template.html`, встраивая JSON-данные из таблицы.
+- **PWA**: `sw.js` (Network First для HTML, Cache First для медиа + предзагрузка изображений после первой загрузки сайта пользователем).
+- **PDF**: `build_pdf.py` (без картинок) и `build_pdf_full.py` (с картинками, визуально напоминая сайт).
+- **Запуск всех скриптов**: всегда через `uv run <script.py>`.
 
-## Правила кода (Python)
-- Используй uv run для запуска скриптов.
-- Type hints, PEP 8, минимальные зависимости, последние лучшие практики
+## 🚀 Git Infrastructure
+- **Remote: origin** -> `https://github.com/.../dev-test` (Песочница для тестирования изменений)
+- **Remote: prod** -> `https://github.com/.../menu` (production)
+- **Workflow:** Local Edit -> Push to Origin -> Manual Verify -> Push to Prod.
 
-## Правила фронтенда
-- Современный семантический vanilla HTML
-- современный CSS без frameworks
-- современный vanilla JS без dependencies
-- чистый код HTML/CSS/JS
+## Ключевые файлы и правила
 
-## Workflow (Протокол Деплоя)
-1. **Разработка:** Все правки вносим в локальную папку.
-2. **Тест:** `git push origin main` (отправка в `dev-test`). Проверяем GitHub Pages.
-3. **Прод:** Только после успеха: `git push production main`.
+**Никогда не редактируй напрямую:**
+- `index.html` (генерируется через `build.py`)
+- Файлы в `assets/img/thumbs/` и `assets/img/full/` (генерируются `process_images.py`)
 
-## 🤖 Инструкции для Gemini (Skills & Prompts)
-- **Check Logs:** "Проанализируй последние записи в `log.log` или вывод GitHub Actions. Найди причину ERR_FAILED."
-- **Build Test:** "Запусти `python build.py` локально и проверь, корректно ли сгенерирован JSON в `index.html`."
-- **Image Audit:** "Проверь папку `assets/img/thumbs`, убедись что для каждого ID из таблицы создан файл."
+**Разрешено и рекомендуется править:**
+- `template.html`
+- `sw.js`
+- Python-скрипты: `build.py`, `process_images.py`, `build_pdf.py`, `build_pdf_full.py`
+- `.github/workflows/build.yml`
+
+## Workflow (Протокол деплоя)
+
+1. Вноси изменения локально.
+2. `git push origin main` → отправка в `dev-test`.
+3. Никогда не выполняй без предупреждения и без моего согласия: `git push prod main`. (production)
+
+## 📂 Важные файлы
+- `.github/workflows/build.yml` - логика сборки в GitHub Actions. Ключевой пайплайн, который триггерится при каждой пересборке сайта
+
+## 🛠 Google Sheets Integration
+- **Trigger:** Google Apps Script в таблице.
+- **Actions:** - `triggerDevBuild`: Стучится в `dev-test` репозиторий (webhook repository_dispatch).
+  - `triggerProdBuild`: Стучится в основной `menu` репозиторий.
+- **Security:** Токен GitHub хранится в ScriptProperties (Property Name: `GH_TOKEN`).
+
+
+## Полезные команды и инструкции для агента
+
+- **Локальная сборка**: После правок в Python-скриптах просить запустить `uv run build.py` для проверки валидности HTML.
+- **Обработка изображений**: `uv run process_images.py`
+- **Генерация PDF**: `uv run build_pdf.py` и `uv run build_pdf_full.py`
+
+**Инструкции при работе:**
+- **Check Logs**: "Проанализируй последние записи в `log.log` или вывод GitHub Actions. Найди причину ошибки."
+- **Build Test**: "Запусти `uv run build.py` локально и проверь корректность JSON в сгенерированном `index.html`."
+- **Image Audit**: Убедись, что для каждого ID из Google Sheets существует thumbnail в `assets/img/thumbs/`.
+
+## Дополнительные требования к коду
+
+**Python**:
+- Type hints, PEP 8, минимальные зависимости.
+- Используй `uv`.
+
+**Frontend**:
+- Современный семантический vanilla HTML + CSS + JS (без фреймворков и внешних зависимостей).
+- Чистый, читаемый код.
+
+
+## Frontend Design Skill (Override)
+
+При использовании skill `frontend-design` **строго соблюдай**:
+- 100% vanilla HTML + CSS + JS (никаких фреймворков и Tailwind).
+- Используй современный CSS: `:has()`, container queries, custom properties, cascade layers и другие нативные возможности.
+- Все стили размещай в `template.html` (внутри `<style>`)
+- Никаких build-шагов для стилей.
+
+---
+
+**Главные приоритеты:**  
+Стабильность сборки, строгое следование workflow, чистый vanilla код и корректная работа с данными из Google Sheets.

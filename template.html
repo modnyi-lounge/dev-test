@@ -6,7 +6,7 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#faf7f2">
     <link rel="apple-touch-icon" href="assets/icon-192x192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Modnyi Menu">
     <title>Модный Lounge Bar</title>
@@ -195,7 +195,11 @@
             padding-top: 5px;
         }
         
-        .weight-badge { color: #8c7f70; font-size: 14px; margin: 5px 0 12px;}
+        .weight-badge {
+            color: var(--inactive);
+            font-size: 14px;
+            margin: 5px 0 12px;
+        }
         
         .close-btn { 
             position: absolute; top: 16px; right: 16px; 
@@ -231,27 +235,31 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            background: var(--white);
+            gap: 8px;
+            background: transparent;
             color: var(--text);
+            opacity: 0.85;
             text-decoration: none;
-            padding: 14px 28px;
-            border-radius: var(--radius);
+            padding: 10px;
             font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 4px 12px rgba(74, 63, 53, 0.08);
-            margin-bottom: 30px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 15px;
+            margin-bottom: 25px;
+            transition: color 0.2s ease;
             -webkit-tap-highlight-color: transparent;
         }
         .download-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 2px 6px rgba(74, 63, 53, 0.1);
+            color: var(--text);
+            opacity: 0.6;
         }
         .download-icon {
-            width: 22px;
-            height: 22px;
-            fill: var(--primary);
+            width: 18px;
+            height: 18px;
+            fill: var(--text);
+            transition: fill 0.2s ease;
+        }
+        .download-btn:active .download-icon {
+            color: var(--text);
+            opacity: 0.6;
         }
         .footer-phone {
             display: block;
@@ -263,12 +271,13 @@
             -webkit-tap-highlight-color: transparent;
         }
         .footer-warning {
-            font-size: 13px;
-            color: var(--inactive);
-            line-height: 1.5;
-            max-width: 300px;
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.25;
+            max-width: 320px;
             margin: 0 auto;
-            opacity: 0.9;
+            font-weight: 500;
+            opacity: 0.85;
         }
     </style>
 </head>

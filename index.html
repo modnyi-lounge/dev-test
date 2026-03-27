@@ -42,14 +42,15 @@
             top: 0;
             z-index: 100;
             background: var(--bg);
-            /* Принудительное создание композитного слоя для iOS Safari */
+            /* Важно для iOS Safari: overflow видим по умолчанию, но явно укажем */
+            overflow: visible;
             will-change: transform;
-            contain: layout style paint;
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            /* Убираем мерцание при переключении */
-            backface-visibility: hidden;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
             -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            /* Изолируем шапку для View Transitions API */
+            view-transition-name: main-header;
         }
 
         .main-tabs {
@@ -288,12 +289,12 @@
             <button class="main-tab" data-tab-trigger="bar">Бар</button>
         </div>
         <nav class="nav-scroller" id="nav-scroller">
-            <a href="#cat-4114175676559238326" class="nav-item" data-tab="food" style="display: inline-block;">Салаты</a><a href="#cat-5813045457672532115" class="nav-item" data-tab="food" style="display: inline-block;">Супы</a><a href="#cat-512525933683929021" class="nav-item" data-tab="food" style="display: inline-block;">Пасты</a><a href="#cat-1077843061581002345" class="nav-item" data-tab="food" style="display: inline-block;">Пицца</a><a href="#cat-16260685687312362" class="nav-item" data-tab="food" style="display: inline-block;">Добавки к пиццам</a><a href="#cat-6913580139597232074" class="nav-item" data-tab="food" style="display: inline-block;">Роллы</a><a href="#cat-4818731093449504905" class="nav-item" data-tab="food" style="display: inline-block;">Гунканы</a><a href="#cat-5805101791810968129" class="nav-item" data-tab="food" style="display: inline-block;">Запеченные роллы</a><a href="#cat-644479345974268644" class="nav-item" data-tab="food" style="display: inline-block;">Жареные роллы</a><a href="#cat-2268193709249148635" class="nav-item" data-tab="food" style="display: inline-block;">Закуски</a><a href="#cat-6833727959375474991" class="nav-item" data-tab="food" style="display: inline-block;">Горячие закуски</a><a href="#cat-7881539616191387335" class="nav-item" data-tab="food" style="display: inline-block;">Удон</a><a href="#cat-4581718900847791546" class="nav-item" data-tab="food" style="display: inline-block;">Тандыр меню (от 200 гр)</a><a href="#cat-5764650320361965343" class="nav-item" data-tab="food" style="display: inline-block;">Овощи (от 100 гр)</a><a href="#cat-3603458405669446548" class="nav-item" data-tab="food" style="display: inline-block;">Основные блюда</a><a href="#cat-7045252693958318915" class="nav-item" data-tab="food" style="display: inline-block;">Бургеры</a><a href="#cat-5249647526683958874" class="nav-item" data-tab="food" style="display: inline-block;">Добавки к бургерам</a><a href="#cat-4320637959522517740" class="nav-item" data-tab="food" style="display: inline-block;">Десерты</a><a href="#cat-5073810010613890072" class="nav-item" data-tab="food" style="display: inline-block;">Соусы</a><a href="#cat-6999943515621297332" class="nav-item" data-tab="bar" style="display: none;">Коктейли классика</a><a href="#cat-1944933195997859282" class="nav-item" data-tab="bar" style="display: none;">Авторские коктейли</a><a href="#cat-3161213438476825727" class="nav-item" data-tab="bar" style="display: none;">Шоты</a><a href="#cat-7555614710295931206" class="nav-item" data-tab="bar" style="display: none;">Сеты шотов</a><a href="#cat-214454047031396734" class="nav-item" data-tab="bar" style="display: none;">Вино белое</a><a href="#cat-6844989846679656279" class="nav-item" data-tab="bar" style="display: none;">Красное</a><a href="#cat-2178089716812915035" class="nav-item" data-tab="bar" style="display: none;">Розовое</a><a href="#cat-748383969689018103" class="nav-item" data-tab="bar" style="display: none;">Коньяк и бренди</a><a href="#cat-6891472217759549361" class="nav-item" data-tab="bar" style="display: none;">Игристые вина</a><a href="#cat-3734186235547682537" class="nav-item" data-tab="bar" style="display: none;">Пиво</a><a href="#cat-6057150137684886054" class="nav-item" data-tab="bar" style="display: none;">Пиво бутылка</a><a href="#cat-5630403396003373827" class="nav-item" data-tab="bar" style="display: none;">Водка</a><a href="#cat-2265645130722910452" class="nav-item" data-tab="bar" style="display: none;">Шампанское</a><a href="#cat-8003146569734125446" class="nav-item" data-tab="bar" style="display: none;">Виски</a><a href="#cat-2134196222409652692" class="nav-item" data-tab="bar" style="display: none;">Текила</a><a href="#cat-8447075135163124338" class="nav-item" data-tab="bar" style="display: none;">Ром</a><a href="#cat-2593662167119509037" class="nav-item" data-tab="bar" style="display: none;">Джин</a><a href="#cat-590978872215409052" class="nav-item" data-tab="bar" style="display: none;">Аперитив/ликер/вермут</a><a href="#cat-7028761395164642183" class="nav-item" data-tab="bar" style="display: none;">Лимонады</a><a href="#cat-2359357287216428514" class="nav-item" data-tab="bar" style="display: none;">Смузи</a><a href="#cat-5695139866615865056" class="nav-item" data-tab="bar" style="display: none;">Молочный коктейли</a><a href="#cat-6673613139900079354" class="nav-item" data-tab="bar" style="display: none;">Чай</a><a href="#cat-9074548653912683651" class="nav-item" data-tab="bar" style="display: none;">Чай фирменный</a><a href="#cat-7926192811834228602" class="nav-item" data-tab="bar" style="display: none;">Холодный чай</a><a href="#cat-3237165241834453504" class="nav-item" data-tab="bar" style="display: none;">Фреши</a><a href="#cat-2072677839106040485" class="nav-item" data-tab="bar" style="display: none;">Кофе</a><a href="#cat-6388757983659522998" class="nav-item" data-tab="bar" style="display: none;">Холодный кофе</a><a href="#cat-6775433851262398967" class="nav-item" data-tab="bar" style="display: none;">Освежающие напитки</a>
+            <a href="#cat-3960449882835890276" class="nav-item" data-tab="food" style="display: inline-block;">Салаты</a><a href="#cat-210455647298070356" class="nav-item" data-tab="food" style="display: inline-block;">Супы</a><a href="#cat-3102933771323701298" class="nav-item" data-tab="food" style="display: inline-block;">Пасты</a><a href="#cat-531386564714527441" class="nav-item" data-tab="food" style="display: inline-block;">Пицца</a><a href="#cat-7217839606809285324" class="nav-item" data-tab="food" style="display: inline-block;">Добавки к пиццам</a><a href="#cat-6282582194589507160" class="nav-item" data-tab="food" style="display: inline-block;">Роллы</a><a href="#cat-3553395108199245686" class="nav-item" data-tab="food" style="display: inline-block;">Гунканы</a><a href="#cat-1167021023019331536" class="nav-item" data-tab="food" style="display: inline-block;">Запеченные роллы</a><a href="#cat-1887646126568989046" class="nav-item" data-tab="food" style="display: inline-block;">Жареные роллы</a><a href="#cat-819507014332137667" class="nav-item" data-tab="food" style="display: inline-block;">Закуски</a><a href="#cat-1481187142466254736" class="nav-item" data-tab="food" style="display: inline-block;">Горячие закуски</a><a href="#cat-7306334398671922044" class="nav-item" data-tab="food" style="display: inline-block;">Удон</a><a href="#cat-2654608621026298731" class="nav-item" data-tab="food" style="display: inline-block;">Тандыр меню (от 200 гр)</a><a href="#cat-8705539207959078172" class="nav-item" data-tab="food" style="display: inline-block;">Овощи (от 100 гр)</a><a href="#cat-1709916248462034971" class="nav-item" data-tab="food" style="display: inline-block;">Основные блюда</a><a href="#cat-3017928134584552852" class="nav-item" data-tab="food" style="display: inline-block;">Бургеры</a><a href="#cat-2021790394458175022" class="nav-item" data-tab="food" style="display: inline-block;">Добавки к бургерам</a><a href="#cat-1711957866808073987" class="nav-item" data-tab="food" style="display: inline-block;">Десерты</a><a href="#cat-8038459737822636475" class="nav-item" data-tab="food" style="display: inline-block;">Соусы</a><a href="#cat-502310480228784511" class="nav-item" data-tab="bar" style="display: none;">Коктейли классика</a><a href="#cat-4408386591898727494" class="nav-item" data-tab="bar" style="display: none;">Авторские коктейли</a><a href="#cat-4350694650463042387" class="nav-item" data-tab="bar" style="display: none;">Шоты</a><a href="#cat-224029375819102769" class="nav-item" data-tab="bar" style="display: none;">Сеты шотов</a><a href="#cat-3055665266896427541" class="nav-item" data-tab="bar" style="display: none;">Вино белое</a><a href="#cat-9213066213474082371" class="nav-item" data-tab="bar" style="display: none;">Красное</a><a href="#cat-5671193993060437939" class="nav-item" data-tab="bar" style="display: none;">Розовое</a><a href="#cat-4493184435303842290" class="nav-item" data-tab="bar" style="display: none;">Коньяк и бренди</a><a href="#cat-62232590892975217" class="nav-item" data-tab="bar" style="display: none;">Игристые вина</a><a href="#cat-4633571088415221261" class="nav-item" data-tab="bar" style="display: none;">Пиво</a><a href="#cat-2670017089501844526" class="nav-item" data-tab="bar" style="display: none;">Пиво бутылка</a><a href="#cat-4210021834958453085" class="nav-item" data-tab="bar" style="display: none;">Водка</a><a href="#cat-1903402810459215307" class="nav-item" data-tab="bar" style="display: none;">Шампанское</a><a href="#cat-5745362806591262944" class="nav-item" data-tab="bar" style="display: none;">Виски</a><a href="#cat-2492417173497869991" class="nav-item" data-tab="bar" style="display: none;">Текила</a><a href="#cat-219014228316976819" class="nav-item" data-tab="bar" style="display: none;">Ром</a><a href="#cat-4047564164789408988" class="nav-item" data-tab="bar" style="display: none;">Джин</a><a href="#cat-611252241910479611" class="nav-item" data-tab="bar" style="display: none;">Аперитив/ликер/вермут</a><a href="#cat-6799954099853436713" class="nav-item" data-tab="bar" style="display: none;">Лимонады</a><a href="#cat-2967001893131186192" class="nav-item" data-tab="bar" style="display: none;">Смузи</a><a href="#cat-5337230863527881031" class="nav-item" data-tab="bar" style="display: none;">Молочный коктейли</a><a href="#cat-8910488888749431115" class="nav-item" data-tab="bar" style="display: none;">Чай</a><a href="#cat-6468953315648444526" class="nav-item" data-tab="bar" style="display: none;">Чай фирменный</a><a href="#cat-274815625615544054" class="nav-item" data-tab="bar" style="display: none;">Холодный чай</a><a href="#cat-3321187381518998641" class="nav-item" data-tab="bar" style="display: none;">Фреши</a><a href="#cat-8223308061210156080" class="nav-item" data-tab="bar" style="display: none;">Кофе</a><a href="#cat-5144299487327626040" class="nav-item" data-tab="bar" style="display: none;">Холодный кофе</a><a href="#cat-2091941642613333020" class="nav-item" data-tab="bar" style="display: none;">Освежающие напитки</a>
         </nav>
     </div>
 
     <div class="container">
-        <section id="content-food" class="tab-content"><h2 id="cat-4114175676559238326" class="category-title">Салаты</h2>
+        <section id="content-food" class="tab-content"><h2 id="cat-3960449882835890276" class="category-title">Салаты</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="0">
                 <img src="assets/img/thumbs/1JPmpgeSb_0q9tXwdxNuemZPWg02CxTXm.webp" class="product-img" loading="lazy" alt="Салат с морепродуктами">
@@ -358,7 +359,7 @@
                     <div class="product-price">750 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5813045457672532115" class="category-title">Супы</h2>
+<h2 id="cat-210455647298070356" class="category-title">Супы</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="9">
                 <img src="assets/img/thumbs/1Hpdmk1u4nPNXuNjhDJu3j_tG2ZlBV8rv.webp" class="product-img" loading="lazy" alt="Том ям">
@@ -381,7 +382,7 @@
                     <div class="product-price">390 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-512525933683929021" class="category-title">Пасты</h2>
+<h2 id="cat-3102933771323701298" class="category-title">Пасты</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="12">
                 <img src="assets/img/thumbs/1mOPJghQH7X_x6ga-FgZ7yx1xP9eh2HX7.webp" class="product-img" loading="lazy" alt="Фетучини с креветкой и цукини">
@@ -418,7 +419,7 @@
                     <div class="product-price">790 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-1077843061581002345" class="category-title">Пицца</h2>
+<h2 id="cat-531386564714527441" class="category-title">Пицца</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="17">
                 <img src="assets/img/thumbs/14FIvLV3iBsMZynBSmF0CKFadEqhLY_n7.webp" class="product-img" loading="lazy" alt="4 сыра">
@@ -476,7 +477,7 @@
                     <div class="product-price">890 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-16260685687312362" class="category-title">Добавки к пиццам</h2>
+<h2 id="cat-7217839606809285324" class="category-title">Добавки к пиццам</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="25">
                 
@@ -506,7 +507,7 @@
                     <div class="product-price">100 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6913580139597232074" class="category-title">Роллы</h2>
+<h2 id="cat-6282582194589507160" class="category-title">Роллы</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="29">
                 <img src="assets/img/thumbs/1ZpTHLuVv92JRlnqpkU1TDOfC9TevAblz.webp" class="product-img" loading="lazy" alt="Филадельфия с креветкой">
@@ -585,7 +586,7 @@
                     <div class="product-price">2290 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-4818731093449504905" class="category-title">Гунканы</h2>
+<h2 id="cat-3553395108199245686" class="category-title">Гунканы</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="40">
                 <img src="assets/img/thumbs/1S6ZV1DspBq1dYPS_mZC8MHmsUEFmfQea.webp" class="product-img" loading="lazy" alt="Гункан с креветкой/лососем/угрем/крабом">
@@ -594,7 +595,7 @@
                     <div class="product-price">200 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5805101791810968129" class="category-title">Запеченные роллы</h2>
+<h2 id="cat-1167021023019331536" class="category-title">Запеченные роллы</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="41">
                 <img src="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" class="product-img" loading="lazy" alt="Нежный с креветкой">
@@ -652,7 +653,7 @@
                     <div class="product-price">890 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-644479345974268644" class="category-title">Жареные роллы</h2>
+<h2 id="cat-1887646126568989046" class="category-title">Жареные роллы</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="49">
                 <img src="assets/img/thumbs/1naFHbywdRxsidX-LKhmyw093NilhKWan.webp" class="product-img" loading="lazy" alt="Кето ролл">
@@ -703,7 +704,7 @@
                     <div class="product-price">2090 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2268193709249148635" class="category-title">Закуски</h2>
+<h2 id="cat-819507014332137667" class="category-title">Закуски</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="56">
                 <img src="assets/img/thumbs/1uJaYgwLjKPDl5rYKmnsjJcLWEabnunXj.webp" class="product-img" loading="lazy" alt="Тартар из лосося с авокадо">
@@ -782,7 +783,7 @@
                     <div class="product-price">490 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6833727959375474991" class="category-title">Горячие закуски</h2>
+<h2 id="cat-1481187142466254736" class="category-title">Горячие закуски</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="67">
                 <img src="assets/img/thumbs/1Ccz4S9ugni7jTgk171yhrtWFY8cD_04Z.webp" class="product-img" loading="lazy" alt="Мидии в соусе дор блю">
@@ -924,7 +925,7 @@
                     <div class="product-price">2890 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-7881539616191387335" class="category-title">Удон</h2>
+<h2 id="cat-7306334398671922044" class="category-title">Удон</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="87">
                 <img src="assets/img/thumbs/1znm-Uy2rMpEeIFKI2oRi0--rbaUchedN.webp" class="product-img" loading="lazy" alt="Удон с говядиной">
@@ -947,7 +948,7 @@
                     <div class="product-price">590 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-4581718900847791546" class="category-title">Тандыр меню (от 200 гр)</h2>
+<h2 id="cat-2654608621026298731" class="category-title">Тандыр меню (от 200 гр)</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="90">
                 <img src="assets/img/thumbs/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp" class="product-img" loading="lazy" alt="Ребра тандыр">
@@ -984,7 +985,7 @@
                     <div class="product-price">2490 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5764650320361965343" class="category-title">Овощи (от 100 гр)</h2>
+<h2 id="cat-8705539207959078172" class="category-title">Овощи (от 100 гр)</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="95">
                 
@@ -1014,7 +1015,7 @@
                     <div class="product-price">180 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-3603458405669446548" class="category-title">Основные блюда</h2>
+<h2 id="cat-1709916248462034971" class="category-title">Основные блюда</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="99">
                 <img src="assets/img/thumbs/1WO0D6btzwP7tV6hjGi7LPup6p490Fi_z.webp" class="product-img" loading="lazy" alt="Бифштекс из мраморной говядины">
@@ -1058,7 +1059,7 @@
                     <div class="product-price">1690 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-7045252693958318915" class="category-title">Бургеры</h2>
+<h2 id="cat-3017928134584552852" class="category-title">Бургеры</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="105">
                 <img src="assets/img/thumbs/1dw3b4iAAatPuWaM9BQDtI54XWX9PtGin.webp" class="product-img" loading="lazy" alt="Бургер с цыпленком">
@@ -1081,7 +1082,7 @@
                     <div class="product-price">990 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5249647526683958874" class="category-title">Добавки к бургерам</h2>
+<h2 id="cat-2021790394458175022" class="category-title">Добавки к бургерам</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="108">
                 
@@ -1111,7 +1112,7 @@
                     <div class="product-price">100 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-4320637959522517740" class="category-title">Десерты</h2>
+<h2 id="cat-1711957866808073987" class="category-title">Десерты</h2>
 <div class="menu-grid">
             <div class="product-card" data-index="112">
                 <img src="assets/img/thumbs/18zo3QOH5w2lbCRKqRy42-AwvJrcDbzyT.webp" class="product-img" loading="lazy" alt="Шоколадный фондан">
@@ -1127,7 +1128,7 @@
                     <div class="product-price">150 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5073810010613890072" class="category-title">Соусы</h2>
+<h2 id="cat-8038459737822636475" class="category-title">Соусы</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="114">
                 
@@ -1221,7 +1222,7 @@
                 </div>
             </div></div>
 </section>
-        <section id="content-bar" class="tab-content" hidden><h2 id="cat-6999943515621297332" class="category-title">Коктейли классика</h2>
+        <section id="content-bar" class="tab-content" hidden><h2 id="cat-502310480228784511" class="category-title">Коктейли классика</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="127">
                 
@@ -1293,7 +1294,7 @@
                     <div class="product-price">650 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-1944933195997859282" class="category-title">Авторские коктейли</h2>
+<h2 id="cat-4408386591898727494" class="category-title">Авторские коктейли</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="137">
                 
@@ -1365,7 +1366,7 @@
                     <div class="product-price">850 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-3161213438476825727" class="category-title">Шоты</h2>
+<h2 id="cat-4350694650463042387" class="category-title">Шоты</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="147">
                 
@@ -1416,7 +1417,7 @@
                     <div class="product-price">390 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-7555614710295931206" class="category-title">Сеты шотов</h2>
+<h2 id="cat-224029375819102769" class="category-title">Сеты шотов</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="154">
                 
@@ -1432,7 +1433,7 @@
                     <div class="product-price">1490/2400 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-214454047031396734" class="category-title">Вино белое</h2>
+<h2 id="cat-3055665266896427541" class="category-title">Вино белое</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="156">
                 
@@ -1469,7 +1470,7 @@
                     <div class="product-price">690/3450 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6844989846679656279" class="category-title">Красное</h2>
+<h2 id="cat-9213066213474082371" class="category-title">Красное</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="161">
                 
@@ -1499,7 +1500,7 @@
                     <div class="product-price">750/3750 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2178089716812915035" class="category-title">Розовое</h2>
+<h2 id="cat-5671193993060437939" class="category-title">Розовое</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="165">
                 
@@ -1508,7 +1509,7 @@
                     <div class="product-price">750/3750 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-748383969689018103" class="category-title">Коньяк и бренди</h2>
+<h2 id="cat-4493184435303842290" class="category-title">Коньяк и бренди</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="166">
                 
@@ -1531,7 +1532,7 @@
                     <div class="product-price">850 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6891472217759549361" class="category-title">Игристые вина</h2>
+<h2 id="cat-62232590892975217" class="category-title">Игристые вина</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="169">
                 
@@ -1575,7 +1576,7 @@
                     <div class="product-price">3490 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-3734186235547682537" class="category-title">Пиво</h2>
+<h2 id="cat-4633571088415221261" class="category-title">Пиво</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="175">
                 
@@ -1598,7 +1599,7 @@
                     <div class="product-price">250/390 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6057150137684886054" class="category-title">Пиво бутылка</h2>
+<h2 id="cat-2670017089501844526" class="category-title">Пиво бутылка</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="178">
                 
@@ -1635,7 +1636,7 @@
                     <div class="product-price">250 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5630403396003373827" class="category-title">Водка</h2>
+<h2 id="cat-4210021834958453085" class="category-title">Водка</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="183">
                 
@@ -1693,7 +1694,7 @@
                     <div class="product-price">550 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2265645130722910452" class="category-title">Шампанское</h2>
+<h2 id="cat-1903402810459215307" class="category-title">Шампанское</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="191">
                 
@@ -1702,7 +1703,7 @@
                     <div class="product-price">17900 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-8003146569734125446" class="category-title">Виски</h2>
+<h2 id="cat-5745362806591262944" class="category-title">Виски</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="192">
                 
@@ -1753,7 +1754,7 @@
                     <div class="product-price">550 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2134196222409652692" class="category-title">Текила</h2>
+<h2 id="cat-2492417173497869991" class="category-title">Текила</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="199">
                 
@@ -1762,7 +1763,7 @@
                     <div class="product-price">530 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-8447075135163124338" class="category-title">Ром</h2>
+<h2 id="cat-219014228316976819" class="category-title">Ром</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="200">
                 
@@ -1778,7 +1779,7 @@
                     <div class="product-price">450 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2593662167119509037" class="category-title">Джин</h2>
+<h2 id="cat-4047564164789408988" class="category-title">Джин</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="202">
                 
@@ -1801,7 +1802,7 @@
                     <div class="product-price">790 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-590978872215409052" class="category-title">Аперитив/ликер/вермут</h2>
+<h2 id="cat-611252241910479611" class="category-title">Аперитив/ликер/вермут</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="205">
                 
@@ -1845,7 +1846,7 @@
                     <div class="product-price">390 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-7028761395164642183" class="category-title">Лимонады</h2>
+<h2 id="cat-6799954099853436713" class="category-title">Лимонады</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="211">
                 
@@ -1889,7 +1890,7 @@
                     <div class="product-price">450/990 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2359357287216428514" class="category-title">Смузи</h2>
+<h2 id="cat-2967001893131186192" class="category-title">Смузи</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="217">
                 
@@ -1905,7 +1906,7 @@
                     <div class="product-price">450 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-5695139866615865056" class="category-title">Молочный коктейли</h2>
+<h2 id="cat-5337230863527881031" class="category-title">Молочный коктейли</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="219">
                 
@@ -1935,7 +1936,7 @@
                     <div class="product-price">450 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6673613139900079354" class="category-title">Чай</h2>
+<h2 id="cat-8910488888749431115" class="category-title">Чай</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="223">
                 
@@ -1944,7 +1945,7 @@
                     <div class="product-price">490 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-9074548653912683651" class="category-title">Чай фирменный</h2>
+<h2 id="cat-6468953315648444526" class="category-title">Чай фирменный</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="224">
                 
@@ -1981,7 +1982,7 @@
                     <div class="product-price">650 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-7926192811834228602" class="category-title">Холодный чай</h2>
+<h2 id="cat-274815625615544054" class="category-title">Холодный чай</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="229">
                 
@@ -1997,7 +1998,7 @@
                     <div class="product-price">450 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-3237165241834453504" class="category-title">Фреши</h2>
+<h2 id="cat-3321187381518998641" class="category-title">Фреши</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="231">
                 
@@ -2027,7 +2028,7 @@
                     <div class="product-price">390 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-2072677839106040485" class="category-title">Кофе</h2>
+<h2 id="cat-8223308061210156080" class="category-title">Кофе</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="235">
                 
@@ -2057,7 +2058,7 @@
                     <div class="product-price">250 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6388757983659522998" class="category-title">Холодный кофе</h2>
+<h2 id="cat-5144299487327626040" class="category-title">Холодный кофе</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="239">
                 
@@ -2073,7 +2074,7 @@
                     <div class="product-price">350 ₽</div>
                 </div>
             </div></div>
-<h2 id="cat-6775433851262398967" class="category-title">Освежающие напитки</h2>
+<h2 id="cat-2091941642613333020" class="category-title">Освежающие напитки</h2>
 <div class="menu-grid">
             <div class="product-card no-image" data-index="241">
                 

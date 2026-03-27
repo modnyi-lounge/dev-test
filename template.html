@@ -21,7 +21,7 @@
             --radius: 18px; 
             --inactive: #8c7f70;
         }
-        html { scroll-behavior: smooth; }
+        /* html { scroll-behavior: smooth; } */
         body { font-family: -apple-system, system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
         
         header { 
@@ -320,7 +320,7 @@
         let scrollPositions = { food: 0, bar: 0 };
         let currentTab = 'food';
 
-        // Делегирование событий для клика по табам и карточкам
+        // Делегирование событий для клика по табам, карточкам и навигации
         document.addEventListener('click', (e) => {
             const tabBtn = e.target.closest('[data-tab-trigger]');
             if (tabBtn) {
@@ -333,6 +333,24 @@
                 const index = card.dataset.index;
                 if (index !== undefined) {
                     openModal(index);
+                }
+                return;
+            }
+
+            // Плавный скролл к категории при клике на навигацию
+            const navItem = e.target.closest('.nav-item');
+            if (navItem) {
+                const href = navItem.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetEl = document.querySelector(href);
+                    if (targetEl) {
+                        const offsetTop = targetEl.offsetTop - 120;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
                 }
             }
         });
@@ -376,27 +394,26 @@
             // Обновляем переменную текущего таба
             currentTab = tabName;
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    let targetScroll = scrollPositions[tabName];
+            // Даём браузеру время на отрисовку sticky header перед скроллом
+            setTimeout(() => {
+                let targetScroll = scrollPositions[tabName];
 
-                    // Проверяем: уходим из таба, где прокручено много (> 49px)
-                    // И идем в таб, где прокручено мало (< 49px)
-                    if (window.scrollY > 49 && targetScroll < 49) {
-                        targetScroll = 50;
-                    }
+                // Проверяем: уходим из таба, где прокручено много (> 49px)
+                // И идем в таб, где прокручено мало (< 49px)
+                if (window.scrollY > 49 && targetScroll < 49) {
+                    targetScroll = 50;
+                }
 
-                    // Мгновенный скролл к вычисленной позиции
-                    window.scrollTo({
-                        top: targetScroll,
-                        behavior: 'auto'
-                    });
-
-                    // Сразу после скролла обновляем координаты категорий
-                    updateOffsets();
-                    highlightNav();
+                // Мгновенный скролл к вычисленной позиции
+                window.scrollTo({
+                    top: targetScroll,
+                    behavior: 'auto'
                 });
-            });
+
+                // Сразу после скролла обновляем координаты категорий
+                updateOffsets();
+                highlightNav();
+            }, 50); // 50ms достаточно для отрисовки
         }
 
         let categoryOffsets = [];

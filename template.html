@@ -359,15 +359,20 @@
             // Обновляем текущий таб
             currentTab = tabName;
 
-            // Восстанавливаем позицию скролла для нового таба
-            // Используем behavior: 'auto', чтобы переход был мгновенным и не вызывал визуальных скачков
-            window.scrollTo({ top: scrollPositions[tabName], behavior: 'auto' });
+            // Устраняем глитчи Safari через двойной кадр анимации
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    // Мгновенный скролл к сохраненной позиции
+                    window.scrollTo({ 
+                        top: scrollPositions[tabName], 
+                        behavior: 'auto' 
+                    });
 
-            // Обновляем расчеты для навигации
-            setTimeout(() => {
-                updateOffsets();
-                highlightNav();
-            }, 50);
+                    // Сразу после скролла обновляем координаты категорий
+                    updateOffsets();
+                    highlightNav();
+                });
+            });
         }
         
         let categoryOffsets = [];

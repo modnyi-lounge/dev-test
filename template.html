@@ -218,6 +218,58 @@
             color: var(--text);
             cursor: pointer;
         }
+
+        /* Footer Styles */
+        footer {
+            padding: 40px 20px 60px;
+            text-align: center;
+            background: var(--bg);
+            border-top: 1px solid var(--nav-bg);
+            margin-top: 20px;
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--white);
+            color: var(--text);
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(74, 63, 53, 0.08);
+            margin-bottom: 30px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .download-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 2px 6px rgba(74, 63, 53, 0.1);
+        }
+        .download-icon {
+            width: 22px;
+            height: 22px;
+            fill: var(--primary);
+        }
+        .footer-phone {
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .footer-warning {
+            font-size: 13px;
+            color: var(--inactive);
+            line-height: 1.5;
+            max-width: 300px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -238,9 +290,19 @@
         <div id="content-bar" style="display: none;">{sections_bar}</div>
     </div>
 
-    <!-- <footer>
-        <a href="menu.pdf" target="_blank" class="download-btn">Скачать меню в PDF</a>
-    </footer> -->
+    <footer>
+        <a href="menu_text.pdf" target="_blank" class="download-btn">
+            <svg class="download-icon" viewBox="0 0 24 24">
+                <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/>
+            </svg>
+            Скачать меню (PDF)
+        </a>
+        <a href="tel:+79888886889" class="footer-phone">+7 988 888-68-89</a>
+        <p class="footer-warning">
+            Просим бережно относиться к планшету. <br>
+            При повреждении устройства взимается компенсация — 15 000 ₽
+        </p>
+    </footer>
     
     <div id="modal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">

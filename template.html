@@ -410,6 +410,14 @@
     <script>
         const menuItems = {items_json};  // Массив, который заполняем
 
+        const scrollPositions = {
+            food: 0,
+            bar: 0
+        };
+
+        // Переменная для хранения текущего активного таба
+        let currentTab = 'food';
+
         // Делегирование событий для клика по табам, карточкам и навигации
         document.addEventListener('click', (e) => {
             const tabBtn = e.target.closest('[data-tab-trigger]');
@@ -464,6 +472,10 @@
         }
 
         function performSwitch(tabName, clickedBtn) {
+
+            // Запоминаем текущий скролл перед уходом с вкладки
+            scrollPositions[currentTab] = window.scrollY;
+
             // Визуальное переключение кнопок
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
             clickedBtn.classList.add('active');
@@ -471,6 +483,13 @@
             // Переключаем видимость контента через hidden атрибут
             document.querySelectorAll('.tab-content').forEach(el => el.hidden = true);
             document.getElementById(`content-${tabName}`).hidden = false;
+
+            // Восстанавливаем скролл для новой вкладки
+            // Используем мгновенный скролл, так как плавность обеспечит View Transition
+            window.scrollTo(0, scrollPositions[tabName]);
+
+            // Обновляем текущий таб для следующего раза
+            currentTab = tabName;
 
             // Фильтруем категории в навигации
             document.querySelectorAll('.nav-item').forEach(item => {

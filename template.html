@@ -22,7 +22,10 @@
             --inactive: #8c7f70;
         }
 
-        /* html { scroll-behavior: smooth; } */
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: -apple-system, system-ui, sans-serif;
             margin: 0;
@@ -47,19 +50,8 @@
         .sticky-header {
             position: sticky;
             top: 0;
-            z-index: 990;
+            z-index: 100;
             background: var(--bg);
-            overflow: visible;
-            margin: 0;
-            padding-top: 1px;
-            margin-top: -1px;
-            isolation: isolate;
-            background-clip: padding-box;
-            /* Важно для iOS Safari: overflow видим по умолчанию, но явно укажем */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
         }
 
         .main-tabs {
@@ -72,10 +64,10 @@
         }
 
         .main-tab {
-            all: unset;
-            background: transparent;
-            border: none;
+            position: relative;
             padding: 8px 13px;
+            border: none;
+            background: transparent;
             font-weight: 600;
             font-size: 16px;
             color: var(--inactive);
@@ -87,10 +79,6 @@
             color: var(--primary);
             background: transparent;
             box-shadow: none;
-        }
-
-        .tab-content[hidden] {
-            display: none;
         }
 
         .nav-scroller {
@@ -124,6 +112,8 @@
         }
 
         .nav-item.active {
+            /*background: var(--primary);*/
+            /*color: var(--white);*/
             background: var(--accent);
         }
 
@@ -272,11 +262,6 @@
             }
         }
 
-        /* Стили для модалки без фото */
-        .modal-body:has(h2:first-child) {
-            padding-top: 5px;
-        }
-
         .weight-badge {
             color: var(--inactive);
             font-size: 14px;
@@ -297,7 +282,7 @@
             cursor: pointer;
             font-size: 22px;
             color: var(--text);
-            z-index: 50;
+            z-index: 100;
         }
 
         .modal-btn {
@@ -311,6 +296,155 @@
             font-weight: 600;
             color: var(--text);
             cursor: pointer;
+        }
+
+        /* Горизонтальная ориентация и десктопы */
+        @media (min-aspect-ratio: 1/1) {
+            .modal-overlay {
+                align-items: center;
+            }
+
+            .modal-content {
+                max-width: 850px;
+                max-height: 85dvh;
+                border-radius: 24px;
+                display: flex;
+                flex-direction: row;
+                animation: fadeInModal 0.3s ease;
+                /* padding: 0; */
+                overflow: hidden;
+            }
+
+            @keyframes fadeInModal {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            .modal-body {
+                display: flex;
+                width: 100%;
+                gap: 40px;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            .modal-body img {
+                /* width: 50%; */
+                width: 45%;
+                max-width: 425px;
+                height: auto;
+                max-height: 85dvh;
+                /* border-radius: 24px 0 0 24px; */
+                border-radius: 24px;
+                margin-bottom: 0;
+                object-fit: cover;
+            }
+
+            /* Если нет картинки — контент на всю ширину */
+            .modal-body:has(.modal-content-inner:only-child) {
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-content-inner {
+                /* width: 50%; */
+                width: 55%;
+                /* padding: 32px 40px; */
+                padding: 0px 20px 0 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                overflow-y: auto;
+                max-height: 85dvh;
+                box-sizing: border-box;
+            }
+
+            /* Если нет картинки — modal-content-inner на всю ширину */
+            .modal-body:has(.modal-content-inner:only-child) .modal-content-inner {
+                width: 100%;
+                max-width: 450px;
+                padding: 32px;
+            }
+
+            .modal-content-inner h2 {
+                font-size: 24px;
+                margin: 0 0 8px 0;
+                line-height: 1.2;
+            }
+
+            .modal-content-inner .weight-badge {
+                margin: 8px 0 0 0;
+                font-size: 14px;
+                opacity: 0.8;
+            }
+
+            .modal-content-inner .product-price {
+                font-size: 24px;
+                margin: 16px 0 20px 0;
+            }
+
+            .modal-content-inner p {
+                margin: 0;
+                line-height: 1.5;
+                font-size: 14px;
+            }
+
+            /* Кнопка закрытия на белом фоне в горизонтальном режиме */
+            .close-btn {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                z-index: 20;
+                width: 36px;
+                height: 36px;
+                font-size: 20px;
+            }
+        }
+
+        /* Для больших десктопов */
+        @media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
+            .modal-overlay {
+                padding: 40px;
+            }
+
+            .modal-content {
+                max-width: 900px;
+                max-height: 80dvh;
+            }
+
+            .modal-body img {
+                max-width: 450px;
+            }
+
+            .modal-content-inner {
+                padding: 36px 40px;
+            }
+
+            .modal-content-inner h2 {
+                font-size: 26px;
+            }
+
+            .modal-content-inner .product-price {
+                font-size: 26px;
+            }
+
+            .modal-content-inner p {
+                font-size: 15px;
+            }
+
+            .close-btn {
+                top: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+            }
         }
 
         footer {
@@ -377,13 +511,12 @@
     </style>
 </head>
 <body>
-    <header>
-        <img src="assets/logo.svg" class="header-logo">
-    </header>
+    <header><img src="assets/logo.svg" class="header-logo"></header>
+    
     <div class="sticky-header">
         <div class="main-tabs">
-            <button class="main-tab active" data-tab-trigger="food">Кухня</button>
-            <button class="main-tab" data-tab-trigger="bar">Бар</button>
+            <button class="main-tab active" onclick="switchTab('food', this)">Кухня</button>
+            <button class="main-tab" onclick="switchTab('bar', this)">Бар</button>
         </div>
         <nav class="nav-scroller" id="nav-scroller">
             {nav_items}
@@ -391,8 +524,8 @@
     </div>
 
     <div class="container">
-        <section id="content-food" class="tab-content">{sections_food}</section>
-        <section id="content-bar" class="tab-content" hidden>{sections_bar}</section>
+        <div id="content-food">{sections_food}</div>
+        <div id="content-bar" style="display: none;">{sections_bar}</div>
     </div>
 
     <footer>
@@ -413,7 +546,7 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="close-btn" onclick="closeModal()">×</div>
             <div id="modal-body" class="modal-body"></div>
-            <button class="modal-btn" onclick="closeModal()">Закрыть</button>
+            <!-- <button class="modal-btn" onclick="closeModal()">Закрыть</button> -->
         </div>
     </div>
     
@@ -422,103 +555,46 @@
     <script>
         const menuItems = {items_json};  // Массив, который заполняем
 
-        const scrollPositions = {
-            food: 0,
-            bar: 0
-        };
-
-        // Переменная для хранения текущего активного таба
-        let currentTab = 'food';
-
-        // Делегирование событий для клика по табам, карточкам и навигации
-        document.addEventListener('click', (e) => {
-            const tabBtn = e.target.closest('[data-tab-trigger]');
-            if (tabBtn) {
-                switchTab(tabBtn.dataset.tabTrigger, tabBtn);
-                return;
-            }
-
-            const card = e.target.closest('.product-card');
-            if (card) {
-                const index = card.dataset.index;
-                if (index !== undefined) {
-                    openModal(index);
-                }
-                return;
-            }
-
-            // Плавный скролл к категории при клике на навигацию
-            const navItem = e.target.closest('.nav-item');
-            if (navItem) {
-                const href = navItem.getAttribute('href');
-                if (href && href.startsWith('#')) {
-                    e.preventDefault();
-                    const targetEl = document.querySelector(href);
-                    if (targetEl) {
-                        const offsetTop = targetEl.offsetTop - 80;
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            }
-        });
-
-        // View Transitions API для плавной смены вкладок
-        async function switchTab(tabName, clickedBtn) {
+        function switchTab(tabName, clickedBtn) {
+            // Проверяем, нажат ли уже активный таб
             const isAlreadyActive = clickedBtn.classList.contains('active');
-
-            // Если нажали на уже активный таб — скроллим наверх
+        
             if (isAlreadyActive) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                return;
+                return; // Прерываем выполнение, так как переключать ничего не нужно
             }
-
-            // Используем View Transitions API если доступно
-            if (document.startViewTransition) {
-                document.startViewTransition(() => performSwitch(tabName, clickedBtn));
-            } else {
-                performSwitch(tabName, clickedBtn);
-            }
-        }
-
-        function performSwitch(tabName, clickedBtn) {
-
-            // Запоминаем текущий скролл перед уходом с вкладки
-            scrollPositions[currentTab] = window.scrollY;
-
-            // Визуальное переключение кнопок
+        
+            // Если это новый таб — выполняем логику переключения
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
             clickedBtn.classList.add('active');
-
-            // Переключаем видимость контента через hidden атрибут
-            document.querySelectorAll('.tab-content').forEach(el => el.hidden = true);
-            document.getElementById(`content-${tabName}`).hidden = false;
-
-            // Восстанавливаем скролл для новой вкладки
-            // Используем мгновенный скролл, так как плавность обеспечит View Transition
-            requestAnimationFrame(() => {
-                window.scrollTo(0, scrollPositions[tabName]);
-
-                // Обновляем текущий таб для следующего раза
-                currentTab = tabName;
-
-                // Фильтруем категории в навигации
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.style.display = item.getAttribute('data-tab') === tabName ? 'inline-block' : 'none';
-                });
-
-                    updateOffsets();
-                    highlightNav();
-                });
+        
+            // Показываем нужные ссылки в скроллере и скрываем ненужные
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.style.display = item.getAttribute('data-tab') === tabName ? 'inline-block' : 'none';
+            });
+        
+            // Сбрасываем скролл горизонтального меню в начало
+            document.getElementById('nav-scroller').scrollLeft = 0;
+        
+            // Показываем нужный контент исходя из активного таба
+            document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
+            document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
+        
+            // переход наверх при смене таба
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        
+            // Обновляем расчеты для активной категории
+            setTimeout(() => {
+                updateOffsets();
+                highlightNav();
+            }, 50);
         }
-
+        
         let categoryOffsets = [];
 
         // Функция для расчета позиций категорий (вызываем при загрузке и ресайзе)
         function updateOffsets() {
-            const activeContainer = document.querySelector('#content-food:not([hidden]), #content-bar:not([hidden])');
+            const activeContainer = document.querySelector('#content-food[style*="block"], #content-bar[style*="block"]');
             if(!activeContainer) return;
             categoryOffsets = Array.from(activeContainer.querySelectorAll('.category-title')).map(el => ({
                 id: el.id, top: el.offsetTop - 120 // отступ для навигации
@@ -598,12 +674,16 @@
                 </p>
             ` : '';
             
+            // Для горизонтального режима используем двухколоночную структуру
             modalBody.innerHTML = `
                 ${imgHTML}
-                <h2 style="margin:0; font-size: 22px;">${item.name}</h2>
-                ${weightHTML}
-                ${priceHTML}
-                ${descHTML}
+                <div class="modal-content-inner">
+                    <h2 style="margin:0; font-size: 22px;">${item.name}</h2>
+                    ${weightHTML}
+                    ${priceHTML}
+                    ${descHTML}
+                    <button class="modal-btn" onclick="closeModal()">Закрыть</button>
+                </div>
             `;
         
             document.getElementById('modal').style.display = 'flex';
@@ -614,6 +694,13 @@
             document.getElementById('modal').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+
+        // Закрытие модалки по клавише ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
 
 
         async function fetchWithTimeout(url, timeout = 5000) {

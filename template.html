@@ -265,15 +265,30 @@
             }
         }
 
-        /* Стили для модалки без фото */
-        .modal-body:has(h2:first-child) {
-            padding-top: 5px;
-        }
-
         .weight-badge {
             color: var(--inactive);
             font-size: 14px;
             margin: 5px 0 12px;
+        }
+
+        .modal-name {
+            margin: 0;
+            font-size: 22px;
+            padding-right: 15px;
+        }
+
+        .modal-price {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .modal-desc {
+            margin: 15px 0;
+            color: var(--text);
+            line-height: 1.4;
+            opacity: 0.9;
         }
 
         .close-btn {
@@ -304,6 +319,100 @@
             font-weight: 600;
             color: var(--text);
             cursor: pointer;
+        }
+
+        /* --- Landscape modal: tablet / horizontal phone / desktop --- */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        @media (min-width: 600px) {
+            .modal-overlay {
+                align-items: center;
+            }
+
+            /* flex-column so .modal-body can use flex:1 and fill the available height */
+            .modal-content {
+                width: 780px;
+                max-width: 90vw;
+                border-radius: 24px;
+                padding: 0;
+                min-height: 150px;
+                max-height: 80dvh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                animation: fadeInScale 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            /* fills modal-content height; gives img a definite parent height for height:100% */
+            .modal-body {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: row;
+            }
+
+            .modal-img-wrap {
+                /* width: 42%; */
+                width: 48%;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                padding-right: 0px;
+                box-sizing: border-box;
+            }
+
+            .modal-body img {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4 / 3;
+                border-radius: 24px;
+                margin-bottom: 0;
+                animation: none;
+            }
+
+            .modal-text {
+                flex: 1;
+                min-width: 0;
+                padding: 28px;
+                padding-right: 40px;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .modal-btn {
+                margin-top: auto;
+            }
+
+            .modal-content.no-image {
+                width: auto;
+                min-width: 320px;
+                max-width: 480px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .modal-content {
+                width: 980px;
+                max-height: 88dvh;
+            }
+
+            .modal-content.no-image {
+                width: auto;
+                min-width: 420px;
+                max-width: 640px;
+            }
+
+            .modal-name  { font-size: 28px; }
+            .modal-price { font-size: 28px; }
+            .modal-desc  { font-size: 18px; }
+            .weight-badge { font-size: 16px; }
+            .modal-btn   { font-size: 18px; padding: 18px; }
         }
 
         footer {
@@ -406,7 +515,6 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="close-btn" onclick="closeModal()">×</div>
             <div id="modal-body" class="modal-body"></div>
-            <button class="modal-btn" onclick="closeModal()">Закрыть</button>
         </div>
     </div>
 
@@ -522,24 +630,28 @@
         function openModal(index) {
             const item = menuItems[index]; // Массив, который будем наполнять
             const modalBody = document.getElementById('modal-body');
+            document.querySelector('.modal-content').classList.toggle('no-image', !item.img_full);
 
-            const imgHTML = item.img_full ? `<img src="${item.img_full}">` : '';
+            const imgHTML = item.img_full ? `<div class="modal-img-wrap"><img src="${item.img_full}"></div>` : '';
             const weightHTML = item.weight ? `<div class="weight-badge">${item.weight}</div>` : '';
             const priceHTML = item.price ?
-                `<p style="color:var(--primary); font-size:22px; font-weight:800; margin: 10px 0;">${item.price} ₽</p>` : '';
+                `<p class="modal-price">${item.price} ₽</p>` : '';
             const descHTML = (item.desc && item.desc.trim() !== "") ? `
-                <p style="margin: 15px 0; color: var(--text); line-height: 1.4; opacity: 0.9;">
-                    <strong style="color: var(--text); white-space: nowrap;">Состав:</strong>
+                <p class="modal-desc">
+                    <strong style="white-space: nowrap;">Состав:</strong>
                     <span>${item.desc}</span>
                 </p>
             ` : '';
 
             modalBody.innerHTML = `
                 ${imgHTML}
-                <h2 style="margin:0; font-size: 22px;">${item.name}</h2>
-                ${weightHTML}
-                ${priceHTML}
-                ${descHTML}
+                <div class="modal-text">
+                    <h2 class="modal-name">${item.name}</h2>
+                    ${weightHTML}
+                    ${priceHTML}
+                    ${descHTML}
+                    <button class="modal-btn" onclick="closeModal()">Закрыть</button>
+                </div>
             `;
 
             document.getElementById('modal').style.display = 'flex';
@@ -550,6 +662,10 @@
             document.getElementById('modal').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
 
 
         async function fetchWithTimeout(url, timeout = 5000) {
@@ -568,6 +684,7 @@
         async function prefetchMenuAssets() {
             if (!navigator.onLine) return;
 
+            // ВАЖНО: имя кэша должно совпадать с CACHE_NAME в sw.js
             const cache = await caches.open('modnyi-v2');
 
             // Собираем все ссылки на картинки из нашего массива menuItems
@@ -581,21 +698,23 @@
 
             console.log(`Проверка кэша для ${urlsToPrefetch.length} ресурсов...`);
 
-            for (const url of urlsToPrefetch) {
-                // Если интернет пропал прямо в процессе цикла — выходим
+            const BATCH_SIZE = 6;
+            for (let i = 0; i < urlsToPrefetch.length; i += BATCH_SIZE) {
                 if (!navigator.onLine) break;
-                try {
-                    // Проверяем, нет ли уже этого в кэше, чтобы не качать дважды
-                    const isCached = await cache.match(url);
-                    if (!isCached) {
-                        const response = await fetchWithTimeout(url, 5000);
-                        if (response && response.ok) {
-                            await cache.put(url, response);
+                const batch = urlsToPrefetch.slice(i, i + BATCH_SIZE);
+                await Promise.all(batch.map(async (url) => {
+                    try {
+                        const isCached = await cache.match(url);
+                        if (!isCached) {
+                            const response = await fetchWithTimeout(url, 5000);
+                            if (response && response.ok) {
+                                await cache.put(url, response);
+                            }
                         }
+                    } catch (e) {
+                        console.warn('Ошибка загрузки (возможно, прервано соединение):', url);
                     }
-                } catch (e) {
-                    console.warn('Ошибка загрузки (возможно, прервано соединение):', url);
-                }
+                }));
             }
             console.log('✅ Фоновое обновление кэша завершено');
         }
@@ -637,7 +756,7 @@
             // Даем браузеру 1 секунду "продышаться" и запускаем восстановление
             setTimeout(async () => {
                 await prefetchMenuAssets();
-                refreshImages();
+                retryFailedImages();
             }, 1000);
         });
 

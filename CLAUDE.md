@@ -36,7 +36,7 @@ This is a static site generator built with Python (uv). Автоматизиро
 - `sw.js`: Логика Service Worker.
 
 ## Общие правила поведения
-<!-- - Think step by step in English, then respond in Russian. -->
+- Think step by step in English, then respond in Russian.
 - Качественный оффлайн-режим сайта критически важен
 - не правь index.html напрямую (потому что HTML генерируется через build.py из template.html)
 
@@ -48,7 +48,13 @@ This is a static site generator built with Python (uv). Автоматизиро
 - Современный семантический vanilla HTML
 - современный CSS без frameworks
 - современный vanilla JS без dependencies
+- не используй внешние шрифты или тяжелые библиотеки. Только системные шрифты.
 - чистый код HTML/CSS/JS
+
+## Frontend Standards (для рефакторинга)
+- **CSS:** Все стили хранятся в `<style>` внутри `template.html`. Используй CSS Variables для цветов и отступов.
+- **Responsiveness:** Mobile-first и tablet-first подход. Основной упор на Android tablet и iPhone (Webview).
+- **Interactivity:** Используй делегирование событий на `document` для элементов, генерируемых динамически.
 
 ## Workflow (Протокол Деплоя)
 **Разработка:** Все правки вносим в локальную папку.

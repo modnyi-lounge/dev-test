@@ -5,6 +5,10 @@ on:
     types: [webhook_update]
   workflow_dispatch: # Позволяет запускать процесс вручную из вкладки Actions
 
+concurrency:
+  group: build-and-deploy
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,8 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          # нужно, чтобы иметь полную историю для пуша
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install system dependencies for WeasyPrint
         run: |
@@ -31,7 +34,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: pip install requests Pillow weasyprint pillow-heif
+        run: pip install "requests>=2.33.0,<3.0" "Pillow>=10.0,<13.0" "weasyprint>=68.1,<70.0" "pillow-heif>=0.18.0,<1.0"
 
       - name: Create asset directories
         run: |

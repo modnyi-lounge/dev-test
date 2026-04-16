@@ -2,9 +2,7 @@ import requests
 import csv
 import os
 from weasyprint import HTML, CSS
-
-SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3OtmgAYtqeTFqohCHU_jtr-4ml_YJvWTyElPtgjMVERcE2K9freCbwEslfQcgzEYA4g7UgR13OAZW/pub?gid=0&single=true&output=csv"
-LOGO_URL = "https://raw.githubusercontent.com/modnyi-lounge/dev-test/main/assets/logo.svg"
+from config import SHEET_CSV_URL
 
 def build_pdf():
     try:
@@ -12,12 +10,16 @@ def build_pdf():
         response.encoding = 'utf-8'
         reader = csv.DictReader(response.text.splitlines())
         items = list(reader)
-
-        logo_response = requests.get(LOGO_URL, timeout=15)
-        logo_content = logo_response.content if logo_response.status_code == 200 else None
     except Exception as e:
         print(f"Ошибка при загрузке данных: {e}")
         return
+
+    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'logo.svg')
+    try:
+        with open(logo_path, 'rb') as f:
+            logo_content = f.read()
+    except OSError:
+        logo_content = None
 
     tabs = {'Кухня': {}, 'Бар': {}}
     for item in items:
@@ -34,9 +36,6 @@ def build_pdf():
     <head>
         <meta charset="UTF-8">
         <style>
-            /* Подключаем шрифт Inter для корректного отображения ₽ и кириллицы в Ubuntu */
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
             @page {{
                 size: A4;
                 margin: 12mm;
@@ -44,7 +43,7 @@ def build_pdf():
             }}
             
             body {{
-                font-family: 'Inter', sans-serif;
+                font-family: 'Liberation Sans', Arial, sans-serif;
                 color: #1E1E1E;
                 margin: 0;
                 padding: 0;

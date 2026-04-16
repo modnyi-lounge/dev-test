@@ -4,13 +4,9 @@ import os
 from weasyprint import HTML, CSS
 from weasyprint.text.fonts import FontConfiguration
 from time import time
+from config import SHEET_CSV_URL, get_drive_id
 
-SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3OtmgAYtqeTFqohCHU_jtr-4ml_YJvWTyElPtgjMVERcE2K9freCbwEslfQcgzEYA4g7UgR13OAZW/pub?gid=0&single=true&output=csv"
-THUMBS_DIR = 'assets/img/thumbs' 
-
-def get_drive_id(url):
-    if not url: return None
-    return url.split('/d/')[1].split('/')[0] if '/d/' in url else (url.split('id=')[1].split('&')[0] if 'id=' in url else None)
+THUMBS_DIR = 'assets/img/thumbs'
 
 def build_pdf():
     try:

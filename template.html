@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#faf7f2">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
     <link rel="apple-touch-icon" href="assets/icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -268,6 +271,26 @@
             margin: 5px 0 12px;
         }
 
+        .modal-name {
+            margin: 0;
+            font-size: 22px;
+            padding-right: 15px;
+        }
+
+        .modal-price {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .modal-desc {
+            margin: 15px 0;
+            color: var(--text);
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
         .close-btn {
             position: absolute;
             top: 16px;
@@ -282,7 +305,7 @@
             cursor: pointer;
             font-size: 22px;
             color: var(--text);
-            z-index: 100;
+            z-index: 10;
         }
 
         .modal-btn {
@@ -298,153 +321,98 @@
             cursor: pointer;
         }
 
-        /* Горизонтальная ориентация и десктопы */
-        @media (min-aspect-ratio: 1/1) {
+        /* --- Landscape modal: tablet / horizontal phone / desktop --- */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        @media (min-width: 600px) {
             .modal-overlay {
                 align-items: center;
             }
 
+            /* flex-column so .modal-body can use flex:1 and fill the available height */
             .modal-content {
-                max-width: 850px;
-                max-height: 85dvh;
+                width: 780px;
+                max-width: 90vw;
                 border-radius: 24px;
-                display: flex;
-                flex-direction: row;
-                animation: fadeInModal 0.3s ease;
-                /* padding: 0; */
-                overflow: hidden;
-            }
-
-            @keyframes fadeInModal {
-                from {
-                    opacity: 0;
-                    transform: scale(0.95);
-                }
-                to {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-            }
-
-            .modal-body {
-                display: flex;
-                width: 100%;
-                gap: 40px;
                 padding: 0;
+                min-height: 150px;
+                max-height: 80dvh;
                 overflow: hidden;
-            }
-
-            .modal-body img {
-                /* width: 50%; */
-                width: 45%;
-                max-width: 425px;
-                height: auto;
-                max-height: 85dvh;
-                /* border-radius: 24px 0 0 24px; */
-                border-radius: 24px;
-                margin-bottom: 0;
-                object-fit: cover;
-            }
-
-            /* Если нет картинки — контент на всю ширину */
-            .modal-body:has(.modal-content-inner:only-child) {
-                justify-content: center;
-                align-items: center;
-            }
-
-            .modal-content-inner {
-                /* width: 50%; */
-                width: 55%;
-                /* padding: 32px 40px; */
-                padding: 0px 20px 0 0;
                 display: flex;
                 flex-direction: column;
+                animation: fadeInScale 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+            }
+
+            /* fills modal-content height; gives img a definite parent height for height:100% */
+            .modal-body {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: row;
+            }
+
+            .modal-img-wrap {
+                /* width: 42%; */
+                width: 48%;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
                 justify-content: center;
-                overflow-y: auto;
-                max-height: 85dvh;
+                padding: 20px;
+                padding-right: 0px;
                 box-sizing: border-box;
             }
 
-            /* Если нет картинки — modal-content-inner на всю ширину */
-            .modal-body:has(.modal-content-inner:only-child) .modal-content-inner {
+            .modal-body img {
                 width: 100%;
-                max-width: 450px;
-                padding: 32px;
+                height: auto;
+                aspect-ratio: 4 / 3;
+                border-radius: 24px;
+                margin-bottom: 0;
+                animation: none;
             }
 
-            .modal-content-inner h2 {
-                font-size: 24px;
-                margin: 0 0 8px 0;
-                line-height: 1.2;
+            .modal-text {
+                flex: 1;
+                min-width: 0;
+                padding: 28px;
+                padding-right: 40px;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
             }
 
-            .modal-content-inner .weight-badge {
-                margin: 8px 0 0 0;
-                font-size: 14px;
-                opacity: 0.8;
+            .modal-btn {
+                margin-top: auto;
             }
 
-            .modal-content-inner .product-price {
-                font-size: 24px;
-                margin: 16px 0 20px 0;
-            }
-
-            .modal-content-inner p {
-                margin: 0;
-                line-height: 1.5;
-                font-size: 14px;
-            }
-
-            /* Кнопка закрытия на белом фоне в горизонтальном режиме */
-            .close-btn {
-                position: absolute;
-                top: 16px;
-                right: 16px;
-                z-index: 20;
-                width: 36px;
-                height: 36px;
-                font-size: 20px;
+            .modal-content.no-image {
+                width: auto;
+                min-width: 320px;
+                max-width: 480px;
             }
         }
 
-        /* Для больших десктопов */
-        @media (min-width: 1024px) and (min-aspect-ratio: 1/1) {
-            .modal-overlay {
-                padding: 40px;
-            }
-
+        @media (min-width: 1024px) {
             .modal-content {
-                max-width: 900px;
-                max-height: 80dvh;
+                width: 980px;
+                max-height: 88dvh;
             }
 
-            .modal-body img {
-                max-width: 450px;
+            .modal-content.no-image {
+                width: auto;
+                min-width: 420px;
+                max-width: 640px;
             }
 
-            .modal-content-inner {
-                padding: 36px 40px;
-            }
-
-            .modal-content-inner h2 {
-                font-size: 26px;
-            }
-
-            .modal-content-inner .product-price {
-                font-size: 26px;
-            }
-
-            .modal-content-inner p {
-                font-size: 15px;
-            }
-
-            .close-btn {
-                top: 20px;
-                right: 20px;
-                width: 40px;
-                height: 40px;
-                font-size: 24px;
-            }
+            .modal-name  { font-size: 28px; }
+            .modal-price { font-size: 28px; }
+            .modal-desc  { font-size: 18px; }
+            .weight-badge { font-size: 16px; }
+            .modal-btn   { font-size: 18px; padding: 18px; }
         }
 
         footer {
@@ -510,9 +478,10 @@
         }
     </style>
 </head>
+
 <body>
     <header><img src="assets/logo.svg" class="header-logo"></header>
-    
+
     <div class="sticky-header">
         <div class="main-tabs">
             <button class="main-tab active" onclick="switchTab('food', this)">Кухня</button>
@@ -531,7 +500,7 @@
     <footer>
         <a href="menu_text.pdf" target="_blank" class="download-btn">
             <svg class="download-icon" viewBox="0 0 24 24">
-                <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z"/>
+                <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z" />
             </svg>
             Скачать меню (PDF)
         </a>
@@ -541,61 +510,60 @@
             При повреждении устройства взимается компенсация — 15 000 ₽
         </p>
     </footer>
-    
+
     <div id="modal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="close-btn" onclick="closeModal()">×</div>
             <div id="modal-body" class="modal-body"></div>
-            <!-- <button class="modal-btn" onclick="closeModal()">Закрыть</button> -->
         </div>
     </div>
-    
 
-    
+
+
     <script>
-        const menuItems = {items_json};  // Массив, который заполняем
+        const menuItems = { items_json };  // Массив, который заполняем
 
         function switchTab(tabName, clickedBtn) {
             // Проверяем, нажат ли уже активный таб
             const isAlreadyActive = clickedBtn.classList.contains('active');
-        
+
             if (isAlreadyActive) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 return; // Прерываем выполнение, так как переключать ничего не нужно
             }
-        
+
             // Если это новый таб — выполняем логику переключения
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
             clickedBtn.classList.add('active');
-        
+
             // Показываем нужные ссылки в скроллере и скрываем ненужные
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.style.display = item.getAttribute('data-tab') === tabName ? 'inline-block' : 'none';
             });
-        
+
             // Сбрасываем скролл горизонтального меню в начало
             document.getElementById('nav-scroller').scrollLeft = 0;
-        
+
             // Показываем нужный контент исходя из активного таба
             document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
             document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
-        
+
             // переход наверх при смене таба
             window.scrollTo({ top: 0, behavior: 'auto' });
-        
+
             // Обновляем расчеты для активной категории
             setTimeout(() => {
                 updateOffsets();
                 highlightNav();
             }, 50);
         }
-        
+
         let categoryOffsets = [];
 
         // Функция для расчета позиций категорий (вызываем при загрузке и ресайзе)
         function updateOffsets() {
             const activeContainer = document.querySelector('#content-food[style*="block"], #content-bar[style*="block"]');
-            if(!activeContainer) return;
+            if (!activeContainer) return;
             categoryOffsets = Array.from(activeContainer.querySelectorAll('.category-title')).map(el => ({
                 id: el.id, top: el.offsetTop - 120 // отступ для навигации
             }));
@@ -649,7 +617,7 @@
             const modal = document.getElementById('modal');
             if (getComputedStyle(modal).display === 'flex') {
                 modal.style.display = 'none';
-                modal.offsetHeight; 
+                modal.offsetHeight;
                 modal.style.display = 'flex';
             }
         });
@@ -662,30 +630,30 @@
         function openModal(index) {
             const item = menuItems[index]; // Массив, который будем наполнять
             const modalBody = document.getElementById('modal-body');
-        
-            const imgHTML = item.img_full ? `<img src="${item.img_full}">`  : '';
+            document.querySelector('.modal-content').classList.toggle('no-image', !item.img_full);
+
+            const imgHTML = item.img_full ? `<div class="modal-img-wrap"><img src="${item.img_full}"></div>` : '';
             const weightHTML = item.weight ? `<div class="weight-badge">${item.weight}</div>` : '';
-            const priceHTML = item.price ? 
-                `<p style="color:var(--primary); font-size:22px; font-weight:800; margin: 10px 0;">${item.price} ₽</p>` : '';
+            const priceHTML = item.price ?
+                `<p class="modal-price">${item.price} ₽</p>` : '';
             const descHTML = (item.desc && item.desc.trim() !== "") ? `
-                <p style="margin: 15px 0; color: var(--text); line-height: 1.4; opacity: 0.9;">
-                    <strong style="color: var(--text); white-space: nowrap;">Состав:</strong>
+                <p class="modal-desc">
+                    <strong style="white-space: nowrap;">Состав:</strong>
                     <span>${item.desc}</span>
                 </p>
             ` : '';
-            
-            // Для горизонтального режима используем двухколоночную структуру
+
             modalBody.innerHTML = `
                 ${imgHTML}
-                <div class="modal-content-inner">
-                    <h2 style="margin:0; font-size: 22px;">${item.name}</h2>
+                <div class="modal-text">
+                    <h2 class="modal-name">${item.name}</h2>
                     ${weightHTML}
                     ${priceHTML}
                     ${descHTML}
                     <button class="modal-btn" onclick="closeModal()">Закрыть</button>
                 </div>
             `;
-        
+
             document.getElementById('modal').style.display = 'flex';
             document.body.style.overflow = 'hidden'; // Запрет прокрутки фона
         }
@@ -695,11 +663,8 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Закрытие модалки по клавише ESC
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+            if (e.key === 'Escape') closeModal();
         });
 
 
@@ -718,13 +683,14 @@
         // Функция фоновой загрузки всех ресурсов
         async function prefetchMenuAssets() {
             if (!navigator.onLine) return;
-            
+
+            // ВАЖНО: имя кэша должно совпадать с CACHE_NAME в sw.js
             const cache = await caches.open('modnyi-v2');
 
             // Собираем все ссылки на картинки из нашего массива menuItems
             // Мы берем и основные фото, и миниатюры
             const urlsToPrefetch = [];
-            // menuItems — это {items_json}, который вставляет build.py        
+            // menuItems — это { items_json }, который вставляет build.py        
             menuItems.forEach(item => {
                 if (item.img_thumb) urlsToPrefetch.push(item.img_thumb);
                 if (item.img_full) urlsToPrefetch.push(item.img_full);
@@ -732,21 +698,23 @@
 
             console.log(`Проверка кэша для ${urlsToPrefetch.length} ресурсов...`);
 
-            for (const url of urlsToPrefetch) {
-                // Если интернет пропал прямо в процессе цикла — выходим
+            const BATCH_SIZE = 6;
+            for (let i = 0; i < urlsToPrefetch.length; i += BATCH_SIZE) {
                 if (!navigator.onLine) break;
-                try {
-                    // Проверяем, нет ли уже этого в кэше, чтобы не качать дважды
-                    const isCached = await cache.match(url);
-                    if (!isCached) {
-                        const response = await fetchWithTimeout(url, 5000);
-                        if (response && response.ok) {
-                            await cache.put(url, response);
+                const batch = urlsToPrefetch.slice(i, i + BATCH_SIZE);
+                await Promise.all(batch.map(async (url) => {
+                    try {
+                        const isCached = await cache.match(url);
+                        if (!isCached) {
+                            const response = await fetchWithTimeout(url, 5000);
+                            if (response && response.ok) {
+                                await cache.put(url, response);
+                            }
                         }
+                    } catch (e) {
+                        console.warn('Ошибка загрузки (возможно, прервано соединение):', url);
                     }
-                } catch (e) {
-                    console.warn('Ошибка загрузки (возможно, прервано соединение):', url);
-                }
+                }));
             }
             console.log('✅ Фоновое обновление кэша завершено');
         }
@@ -788,10 +756,11 @@
             // Даем браузеру 1 секунду "продышаться" и запускаем восстановление
             setTimeout(async () => {
                 await prefetchMenuAssets();
-                refreshImages();
+                retryFailedImages();
             }, 1000);
         });
 
     </script>
 </body>
+
 </html>

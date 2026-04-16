@@ -4,31 +4,23 @@ import csv
 from PIL import Image
 from io import BytesIO
 import pillow_heif
+from config import SHEET_CSV_URL, get_drive_id
 
 # Регистрируем плагин HEIF в Pillow
 pillow_heif.register_heif_opener()
 
-SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3OtmgAYtqeTFqohCHU_jtr-4ml_YJvWTyElPtgjMVERcE2K9freCbwEslfQcgzEYA4g7UgR13OAZW/pub?gid=0&single=true&output=csv"
 THUMBS_DIR = 'assets/img/thumbs'
 FULL_DIR = 'assets/img/full'
 
 # Заголовки, чтобы Google Drive не блокировал запросы
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
 
-def get_drive_id(url):
-    if not url: return None
-    if '/d/' in url:
-        return url.split('/d/')[1].split('/')[0]
-    elif 'id=' in url:
-        return url.split('id=')[1].split('&')[0]
-    return None
-
 def process():
     os.makedirs(THUMBS_DIR, exist_ok=True)
     os.makedirs(FULL_DIR, exist_ok=True)
 
     try:
-        response = requests.get(SHEET_CSV_URL, headers=HEADERS)
+        response = requests.get(SHEET_CSV_URL, headers=HEADERS, timeout=30)
         response.encoding = 'utf-8'
         reader = csv.DictReader(response.text.splitlines())
     except Exception as e:

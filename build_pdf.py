@@ -43,7 +43,7 @@ def build_pdf():
             }}
             
             body {{
-                font-family: 'Liberation Sans', Arial, sans-serif;
+                font-family: 'Inter', sans-serif;
                 color: #1E1E1E;
                 margin: 0;
                 padding: 0;

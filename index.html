@@ -420,6 +420,10 @@
 
         /* --- Landscape phone: wide but short (e.g. iPhone landscape) --- */
         @media (orientation: landscape) and (max-height: 500px) {
+            .menu-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
             .modal-content {
                 width: min(720px, 92vw);
                 max-height: 88dvh;
@@ -2484,9 +2488,13 @@
             }
         });
 
-        // Обработка ресайза (при повороте экрана)
+        // Обработка ресайза (адрес-бар и прочие мелкие изменения viewport)
         window.addEventListener('resize', () => {
             updateOffsets();
+        });
+
+        // Перерисовка модала только при реальном повороте экрана
+        screen.orientation?.addEventListener('change', () => {
             const modal = document.getElementById('modal');
             if (getComputedStyle(modal).display === 'flex') {
                 modal.style.display = 'none';

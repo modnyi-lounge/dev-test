@@ -342,7 +342,8 @@
                 max-width: 90vw;
                 border-radius: 24px;
                 padding: 0;
-                height: 80dvh;
+                min-height: 150px;
+                max-height: 80dvh;
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
@@ -397,23 +398,19 @@
                 width: auto;
                 min-width: 320px;
                 max-width: 480px;
-                height: auto;
-                max-height: 80dvh;
             }
         }
 
         @media (min-width: 1024px) {
             .modal-content {
                 width: 980px;
-                height: 88dvh;
+                max-height: 88dvh;
             }
 
             .modal-content.no-image {
                 width: auto;
                 min-width: 420px;
                 max-width: 640px;
-                height: auto;
-                max-height: 88dvh;
             }
 
             .modal-name  { font-size: 28px; padding-right: 54px; }

@@ -133,7 +133,7 @@ def build_pdf():
                 font-size: 8.5pt;
                 color: #4a3e35;
                 font-weight: 400;
-                margin-right: 3mm;
+                margin-right: 1mm;
             }}
 
             .item-price {{

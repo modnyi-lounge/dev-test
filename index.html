@@ -168,6 +168,10 @@
             box-shadow: 0 6px 16px rgba(74, 63, 53, 0.06);
         }
 
+        .product-card.no-image {
+            align-self: end;
+        }
+
         .product-card.no-image .product-img {
             display: none;
         }
@@ -446,7 +450,8 @@
                 height: 100%;
                 object-fit: cover;
                 aspect-ratio: unset;
-                border-radius: 16px 0 0 16px;
+                /* border-radius: 16px 0 0 16px; */
+                border-radius: 16px;
             }
 
             .modal-text {

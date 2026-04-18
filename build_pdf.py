@@ -133,13 +133,7 @@ def build_pdf():
                 font-size: 8.5pt;
                 color: #4a3e35;
                 font-weight: 400;
-            }}
-
-            .price-divider {{
-                font-size: 11pt;
-                margin: 0 2px;
-                color: #1E1E1E;
-                font-weight: 400;
+                margin-right: 3mm;
             }}
 
             .item-price {{
@@ -174,7 +168,7 @@ def build_pdf():
 
                 price_block = ""
                 if weight and price:
-                    price_block = f'<span class="item-weight">{weight}</span><span class="price-divider">/</span><span class="item-price">{price} ₽</span>'
+                    price_block = f'<span class="item-weight">{weight}</span><span class="item-price">{price} ₽</span>'
                 elif price:
                     price_block = f'<span class="item-price">{price} ₽</span>'
                 elif weight:

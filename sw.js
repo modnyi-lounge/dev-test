@@ -18,14 +18,14 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Активация: чистим старые кэши
+// Активация: чистим старые кэши и берём контроль над открытыми вкладками
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
       keys.map((key) => {
         if (key !== CACHE_NAME) return caches.delete(key);
       })
-    ))
+    )).then(() => self.clients.claim())
   );
 });
 

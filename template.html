@@ -277,7 +277,8 @@
         .modal-name {
             margin: 0;
             font-size: 22px;
-            padding-right: 15px;
+            /* padding-right: 15px; */
+            padding-right: 25px;
         }
 
         .modal-price {
@@ -308,7 +309,7 @@
             cursor: pointer;
             font-size: 22px;
             color: var(--text);
-            z-index: 10;
+            z-index: 100;
         }
 
         .modal-btn {
@@ -382,7 +383,6 @@
                 flex: 1;
                 min-width: 0;
                 padding: 28px;
-                padding-right: 40px;
                 display: flex;
                 flex-direction: column;
                 overflow-y: auto;
@@ -391,6 +391,8 @@
             .modal-btn {
                 margin-top: auto;
             }
+
+            .modal-name { padding-right: 54px; }
 
             .modal-content.no-image {
                 width: auto;
@@ -411,7 +413,7 @@
                 max-width: 640px;
             }
 
-            .modal-name  { font-size: 28px; }
+            .modal-name  { font-size: 28px; padding-right: 54px; }
             .modal-price { font-size: 28px; }
             .modal-desc  { font-size: 18px; }
             .weight-badge { font-size: 16px; }
@@ -445,10 +447,10 @@
             }
 
             .modal-text {
-                padding: 16px 20px 16px 16px;
+                padding: 16px;
             }
 
-            .modal-name  { font-size: 17px; padding-right: 10px; }
+            .modal-name  { font-size: 17px; padding-right: 54px; }
             .modal-price { font-size: 17px; margin: 6px 0; }
             .modal-desc  { font-size: 12px; margin: 6px 0; }
             .weight-badge { font-size: 12px; margin: 3px 0 8px; }

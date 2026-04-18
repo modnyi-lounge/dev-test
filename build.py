@@ -1,8 +1,8 @@
 import requests
-import json
 import csv
 import os
 import re
+import html
 from config import SHEET_CSV_URL, get_drive_id
 
 
@@ -38,8 +38,6 @@ def build():
     nav_html = ""
     sections_food_html = ""
     sections_bar_html = ""
-    flat_items_for_js = []
-    global_idx = 0
 
     for cat_name, cat_items in categories.items():
         # Определяем вкладку по первому товару в категории
@@ -61,33 +59,33 @@ def build():
             img_url = item.get('img', '').strip()
             img_id = get_drive_id(img_url)
 
+            data_name   = html.escape(item.get('name', ''),               quote=True)
+            data_price  = html.escape(price_val,                           quote=True)
+            data_weight = html.escape(item.get('weight', '').strip(),      quote=True)
+            data_desc   = html.escape(item.get('desc', '').strip(),        quote=True)
+
             if img_id:
-                # Проверяем, существуют ли файлы физически в репозитории
                 t_path = f"assets/img/thumbs/{img_id}.webp"
                 f_path = f"assets/img/full/{img_id}.webp"
-
-                item['img_thumb'] = t_path
-                item['img_full'] = f_path
-
-                img_tag = f'<img src="{t_path}" class="product-img" loading="lazy">'
+                img_tag    = f'<img src="{t_path}" class="product-img" loading="lazy">'
                 card_class = "product-card"
             else:
-                item['img_thumb'] = None
-                item['img_full'] = None
-                img_tag = ""
+                t_path = ""
+                f_path = ""
+                img_tag    = ""
                 card_class = "product-card no-image"
 
             section_html += f'''
-            <div class="{card_class}" onclick="openModal({global_idx})">
+            <div class="{card_class}" onclick="openModal(this)"
+                 data-name="{data_name}" data-price="{data_price}"
+                 data-weight="{data_weight}" data-desc="{data_desc}"
+                 data-img-thumb="{t_path}" data-img-full="{f_path}">
                 {img_tag}
                 <div class="product-info">
                     <div class="product-title">{item['name']}</div>
                     {price_html}
                 </div>
             </div>'''
-
-            flat_items_for_js.append(item)
-            global_idx += 1
 
         section_html += '</div>\n'
 
@@ -107,7 +105,6 @@ def build():
     final_html = template.replace('{nav_items}', nav_html)
     final_html = final_html.replace('{sections_food}', sections_food_html)
     final_html = final_html.replace('{sections_bar}', sections_bar_html)
-    final_html = final_html.replace('{ items_json }', json.dumps(flat_items_for_js, ensure_ascii=False))
 
     with open('index.html', 'w', encoding='utf-8') as f:
         f.write(final_html)

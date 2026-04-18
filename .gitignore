@@ -8,6 +8,8 @@ dist/
 wheels/
 *.egg-info
 
+index.html
+
 # Virtual environments
 .venv
 

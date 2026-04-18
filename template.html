@@ -562,6 +562,7 @@
 
     <script>
         const menuItems = { items_json };  // Массив, который заполняем
+        const SW_CACHE_NAME = 'modnyi-v2'; // Должно совпадать с CACHE_NAME в sw.js
 
         function switchTab(tabName, clickedBtn) {
             // Проверяем, нажат ли уже активный таб
@@ -728,8 +729,7 @@
         async function prefetchMenuAssets() {
             if (!navigator.onLine) return;
 
-            // ВАЖНО: имя кэша должно совпадать с CACHE_NAME в sw.js
-            const cache = await caches.open('modnyi-v2');
+            const cache = await caches.open(SW_CACHE_NAME);
 
             // Собираем все ссылки на картинки из нашего массива menuItems
             // Мы берем и основные фото, и миниатюры

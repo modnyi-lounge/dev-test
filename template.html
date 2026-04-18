@@ -561,7 +561,6 @@
 
 
     <script>
-        const menuItems = { items_json };  // Массив, который заполняем
         const SW_CACHE_NAME = 'modnyi-v2'; // Должно совпадать с CACHE_NAME в sw.js
 
         function switchTab(tabName, clickedBtn) {
@@ -672,26 +671,25 @@
             updateOffsets();
             highlightNav();
         });
-        function openModal(index) {
-            const item = menuItems[index]; // Массив, который будем наполнять
+        function openModal(card) {
+            const { name, price, weight, imgFull, desc } = card.dataset;
             const modalBody = document.getElementById('modal-body');
-            document.querySelector('.modal-content').classList.toggle('no-image', !item.img_full);
+            document.querySelector('.modal-content').classList.toggle('no-image', !imgFull);
 
-            const imgHTML = item.img_full ? `<div class="modal-img-wrap"><img src="${item.img_full}"></div>` : '';
-            const weightHTML = item.weight ? `<div class="weight-badge">${item.weight}</div>` : '';
-            const priceHTML = item.price ?
-                `<p class="modal-price">${item.price} ₽</p>` : '';
-            const descHTML = (item.desc && item.desc.trim() !== "") ? `
+            const imgHTML    = imgFull  ? `<div class="modal-img-wrap"><img src="${imgFull}"></div>` : '';
+            const weightHTML = weight   ? `<div class="weight-badge">${weight}</div>` : '';
+            const priceHTML  = price    ? `<p class="modal-price">${price} ₽</p>` : '';
+            const descHTML   = (desc && desc.trim() !== "") ? `
                 <p class="modal-desc">
                     <strong style="white-space: nowrap;">Состав:</strong>
-                    <span>${item.desc}</span>
+                    <span>${desc}</span>
                 </p>
             ` : '';
 
             modalBody.innerHTML = `
                 ${imgHTML}
                 <div class="modal-text">
-                    <h2 class="modal-name">${item.name}</h2>
+                    <h2 class="modal-name">${name}</h2>
                     ${weightHTML}
                     ${priceHTML}
                     ${descHTML}
@@ -731,13 +729,10 @@
 
             const cache = await caches.open(SW_CACHE_NAME);
 
-            // Собираем все ссылки на картинки из нашего массива menuItems
-            // Мы берем и основные фото, и миниатюры
             const urlsToPrefetch = [];
-            // menuItems — это { items_json }, который вставляет build.py        
-            menuItems.forEach(item => {
-                if (item.img_thumb) urlsToPrefetch.push(item.img_thumb);
-                if (item.img_full) urlsToPrefetch.push(item.img_full);
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (card.dataset.imgThumb) urlsToPrefetch.push(card.dataset.imgThumb);
+                if (card.dataset.imgFull)  urlsToPrefetch.push(card.dataset.imgFull);
             });
 
             console.log(`Проверка кэша для ${urlsToPrefetch.length} ресурсов...`);

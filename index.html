@@ -1,0 +1,3412 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#faf7f2">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="assets/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Modnyi Menu">
+    <title>Модный Lounge Bar</title>
+    <style>
+        :root {
+            --primary: #d66a40;
+            --accent: #e0dacf;
+            --bg: #faf7f2;
+            --white: #ffffff;
+            --text: #4a3f35;
+            --nav-bg: #eee8de;
+            --radius: 18px;
+            --inactive: #8c7f70;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        header {
+            background: var(--bg);
+            padding: 15px;
+            /* padding-bottom: 5px; */
+            padding-bottom: 0px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .header-logo {
+            width: 130px;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+        }
+
+        .main-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto;
+            padding: 5px 0 0;
+            max-width: 320px;
+        }
+
+        .main-tab {
+            position: relative;
+            padding: 8px 13px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--inactive);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .main-tab.active {
+            color: var(--primary);
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .nav-scroller {
+            display: flex;
+            overflow-x: auto;
+            padding: 5px 10px 12px;
+            gap: 10px;
+            scrollbar-width: none;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .nav-scroller::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-item {
+            white-space: nowrap;
+            padding: 8px 18px;
+            background: var(--nav-bg);
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:active {
+            opacity: 0.7;
+        }
+
+        .nav-item.active {
+            /*background: var(--primary);*/
+            /*color: var(--white);*/
+            background: var(--accent);
+        }
+
+        .category-title {
+            padding: 20px 15px 10px 0;
+            margin: 0;
+            font-size: 22px;
+            color: var(--text);
+            scroll-margin-top: 80px;
+        }
+
+        .container {
+            padding: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            padding: 12px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .menu-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 6px 16px rgba(74, 63, 53, 0.06);
+        }
+
+        .product-card.no-image {
+            align-self: end;
+        }
+
+        .product-card.no-image .product-img {
+            display: none;
+        }
+
+        .product-img {
+            width: 100%;
+            object-fit: cover;
+            display: block;
+            aspect-ratio: 4/3;
+        }
+
+        .product-img[src=""],
+        .product-img:not([src]) {
+            display: none;
+        }
+
+        .product-info {
+            padding: 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.2;
+            /* height: 34px; display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden; */
+        }
+
+        .product-price {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(50, 42, 36, 0.65);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-end;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 24px 24px 0 0;
+            max-height: 85dvh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-sizing: border-box;
+            padding: 24px;
+            margin: 0 auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-body img {
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            height: auto;
+
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .weight-badge {
+            color: var(--inactive);
+            font-size: 14px;
+            margin: 5px 0 12px;
+        }
+
+        .modal-name {
+            margin: 0;
+            font-size: 22px;
+            /* padding-right: 15px; */
+            padding-right: 25px;
+        }
+
+        .modal-price {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .modal-desc {
+            margin: 15px 0;
+            color: var(--text);
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--nav-bg);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 22px;
+            color: var(--text);
+            z-index: 100;
+            transform: translateZ(0);
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 20px;
+            border-radius: 14px;
+            border: none;
+            background: var(--nav-bg);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        /* --- Portrait tablet: tighten modal so it fits without scrolling --- */
+        /* @media (min-width: 600px) and (orientation: portrait) {
+            .modal-body img {
+                margin-bottom: 10px;
+            }
+
+            .modal-name  { font-size: 19px; }
+            .modal-price { font-size: 19px; margin: 6px 0; }
+            .modal-desc  { margin: 12px 0; }
+            .weight-badge { margin: 4px 0 8px; }
+            .modal-btn   { padding: 14px; margin-top: 12px; }
+        } */
+
+        /* --- Landscape modal: tablet / horizontal phone / desktop --- */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        @media (min-width: 600px) and (orientation: landscape) {
+            .modal-overlay {
+                align-items: center;
+            }
+
+            /* flex-column so .modal-body can use flex:1 and fill the available height */
+            .modal-content {
+                width: 780px;
+                max-width: 90vw;
+                border-radius: 24px;
+                padding: 0;
+                min-height: 150px;
+                max-height: 80dvh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                animation: fadeInScale 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+            }
+
+            /* fills modal-content height; gives img a definite parent height for height:100% */
+            .modal-body {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                flex-direction: row;
+            }
+
+            .modal-img-wrap {
+                /* width: 42%; */
+                width: 48%;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                padding-right: 0px;
+                box-sizing: border-box;
+            }
+
+            .modal-body img {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 4 / 3;
+                border-radius: 24px;
+                margin-bottom: 0;
+                animation: none;
+            }
+
+            .modal-text {
+                flex: 1;
+                min-width: 0;
+                padding: 28px;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .modal-btn {
+                margin-top: auto;
+            }
+
+            .modal-name { padding-right: 54px; }
+
+            .modal-content.no-image {
+                width: auto;
+                min-width: 320px;
+                max-width: 480px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .modal-content {
+                width: 980px;
+                max-height: 88dvh;
+            }
+
+            .modal-content.no-image {
+                width: auto;
+                min-width: 420px;
+                max-width: 640px;
+            }
+
+            .modal-name  { font-size: 28px; padding-right: 54px; }
+            .modal-price { font-size: 28px; }
+            .modal-desc  { font-size: 18px; }
+            .weight-badge { font-size: 16px; }
+            .modal-btn   { font-size: 18px; padding: 18px; }
+        }
+
+        /* --- Landscape phone: wide but short (e.g. iPhone landscape) --- */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .menu-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .modal-content {
+                width: min(720px, 92vw);
+                max-height: 88dvh;
+            }
+
+            .modal-img-wrap {
+                width: 40%;
+                align-self: stretch;
+                padding: 12px;
+                padding-right: 0;
+            }
+
+            .modal-img-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                aspect-ratio: unset;
+                /* border-radius: 16px 0 0 16px; */
+                border-radius: 16px;
+            }
+
+            .modal-text {
+                padding: 16px;
+            }
+
+            .modal-name  { font-size: 17px; padding-right: 54px; }
+            .modal-price { font-size: 17px; margin: 6px 0; }
+            .modal-desc  { font-size: 12px; margin: 6px 0; }
+            .weight-badge { font-size: 12px; margin: 3px 0 8px; }
+            .modal-btn   { font-size: 14px; padding: 10px; }
+        }
+
+        footer {
+            padding: 40px 20px 60px;
+            text-align: center;
+            background: var(--bg);
+            border-top: 1px solid var(--nav-bg);
+            margin-top: 20px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--text);
+            opacity: 0.85;
+            text-decoration: none;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 25px;
+            transition: color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .download-btn:active {
+            color: var(--text);
+            opacity: 0.6;
+        }
+
+        .download-icon {
+            width: 18px;
+            height: 18px;
+            fill: var(--text);
+            transition: fill 0.2s ease;
+        }
+
+        .download-btn:active .download-icon {
+            color: var(--text);
+            opacity: 0.6;
+        }
+
+        .footer-phone {
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .footer-warning {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.25;
+            max-width: 320px;
+            margin: 0 auto;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+
+<body>
+    <header><img src="assets/logo.svg" class="header-logo"></header>
+
+    <div class="sticky-header">
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="switchTab('food', this)">Кухня</button>
+            <button class="main-tab" onclick="switchTab('bar', this)">Бар</button>
+        </div>
+        <nav class="nav-scroller" id="nav-scroller">
+            <a href="#cat-салаты" class="nav-item" data-tab="food" style="display: inline-block;">Салаты</a><a href="#cat-супы" class="nav-item" data-tab="food" style="display: inline-block;">Супы</a><a href="#cat-пасты" class="nav-item" data-tab="food" style="display: inline-block;">Пасты</a><a href="#cat-удон" class="nav-item" data-tab="food" style="display: inline-block;">Удон</a><a href="#cat-роллы" class="nav-item" data-tab="food" style="display: inline-block;">Роллы</a><a href="#cat-гунканы" class="nav-item" data-tab="food" style="display: inline-block;">Гунканы</a><a href="#cat-запеченные-роллы" class="nav-item" data-tab="food" style="display: inline-block;">Запеченные роллы</a><a href="#cat-жареные-роллы" class="nav-item" data-tab="food" style="display: inline-block;">Жареные роллы</a><a href="#cat-пицца" class="nav-item" data-tab="food" style="display: inline-block;">Пицца</a><a href="#cat-добавки-к-пиццам" class="nav-item" data-tab="food" style="display: inline-block;">Добавки к пиццам</a><a href="#cat-закуски" class="nav-item" data-tab="food" style="display: inline-block;">Закуски</a><a href="#cat-горячие-закуски" class="nav-item" data-tab="food" style="display: inline-block;">Горячие закуски</a><a href="#cat-тандыр-меню-от-200-гр" class="nav-item" data-tab="food" style="display: inline-block;">Тандыр меню (от 200 гр)</a><a href="#cat-овощи-от-100-гр" class="nav-item" data-tab="food" style="display: inline-block;">Овощи (от 100 гр)</a><a href="#cat-основные-блюда" class="nav-item" data-tab="food" style="display: inline-block;">Основные блюда</a><a href="#cat-бургеры" class="nav-item" data-tab="food" style="display: inline-block;">Бургеры</a><a href="#cat-добавки-к-бургерам" class="nav-item" data-tab="food" style="display: inline-block;">Добавки к бургерам</a><a href="#cat-десерты" class="nav-item" data-tab="food" style="display: inline-block;">Десерты</a><a href="#cat-соусы" class="nav-item" data-tab="food" style="display: inline-block;">Соусы</a><a href="#cat-коктейли-классика" class="nav-item" data-tab="bar" style="display: none;">Коктейли классика</a><a href="#cat-авторские-коктейли" class="nav-item" data-tab="bar" style="display: none;">Авторские коктейли</a><a href="#cat-шоты" class="nav-item" data-tab="bar" style="display: none;">Шоты</a><a href="#cat-сеты-шотов" class="nav-item" data-tab="bar" style="display: none;">Сеты шотов</a><a href="#cat-вино-белое" class="nav-item" data-tab="bar" style="display: none;">Вино белое</a><a href="#cat-красное" class="nav-item" data-tab="bar" style="display: none;">Красное</a><a href="#cat-розовое" class="nav-item" data-tab="bar" style="display: none;">Розовое</a><a href="#cat-коньяк-и-бренди" class="nav-item" data-tab="bar" style="display: none;">Коньяк и бренди</a><a href="#cat-игристые-вина" class="nav-item" data-tab="bar" style="display: none;">Игристые вина</a><a href="#cat-шампанское" class="nav-item" data-tab="bar" style="display: none;">Шампанское</a><a href="#cat-пиво" class="nav-item" data-tab="bar" style="display: none;">Пиво</a><a href="#cat-пиво-бутылка" class="nav-item" data-tab="bar" style="display: none;">Пиво бутылка</a><a href="#cat-водка" class="nav-item" data-tab="bar" style="display: none;">Водка</a><a href="#cat-виски" class="nav-item" data-tab="bar" style="display: none;">Виски</a><a href="#cat-текила" class="nav-item" data-tab="bar" style="display: none;">Текила</a><a href="#cat-ром" class="nav-item" data-tab="bar" style="display: none;">Ром</a><a href="#cat-джин" class="nav-item" data-tab="bar" style="display: none;">Джин</a><a href="#cat-аперитив-ликер-вермут" class="nav-item" data-tab="bar" style="display: none;">Аперитив/ликер/вермут</a><a href="#cat-лимонады" class="nav-item" data-tab="bar" style="display: none;">Лимонады</a><a href="#cat-смузи" class="nav-item" data-tab="bar" style="display: none;">Смузи</a><a href="#cat-фреши" class="nav-item" data-tab="bar" style="display: none;">Фреши</a><a href="#cat-чай" class="nav-item" data-tab="bar" style="display: none;">Чай</a><a href="#cat-чай-фирменный" class="nav-item" data-tab="bar" style="display: none;">Чай фирменный</a><a href="#cat-холодный-чай" class="nav-item" data-tab="bar" style="display: none;">Холодный чай</a><a href="#cat-кофе" class="nav-item" data-tab="bar" style="display: none;">Кофе</a><a href="#cat-холодный-кофе" class="nav-item" data-tab="bar" style="display: none;">Холодный кофе</a><a href="#cat-молочный-коктейли" class="nav-item" data-tab="bar" style="display: none;">Молочный коктейли</a><a href="#cat-освежающие-напитки" class="nav-item" data-tab="bar" style="display: none;">Освежающие напитки</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div id="content-food" style="display: block"><h2 id="cat-салаты" class="category-title">Салаты</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Салат с морепродуктами" data-price="1290"
+                 data-weight="430 г" data-desc="Микс салата, кальмар, креветки, мидии, гребешок, соус терияки"
+                 data-img-thumb="assets/img/thumbs/1JPmpgeSb_0q9tXwdxNuemZPWg02CxTXm.webp" data-img-full="assets/img/full/1JPmpgeSb_0q9tXwdxNuemZPWg02CxTXm.webp">
+                <img src="assets/img/thumbs/1JPmpgeSb_0q9tXwdxNuemZPWg02CxTXm.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Салат с морепродуктами</div>
+                    <div class="product-price">1290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Цезарь с креветками" data-price="690"
+                 data-weight="250 г" data-desc="Айсберг, креветки, черри, яйцо перепелиное, сухари, соус цезарь"
+                 data-img-thumb="assets/img/thumbs/1kx-kA8X9kPm_alH7dJX5zXoVNcN8zWBS.webp" data-img-full="assets/img/full/1kx-kA8X9kPm_alH7dJX5zXoVNcN8zWBS.webp">
+                <img src="assets/img/thumbs/1kx-kA8X9kPm_alH7dJX5zXoVNcN8zWBS.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Цезарь с креветками</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Цезарь с курицей" data-price="650"
+                 data-weight="290 г" data-desc="Айсберг, филе куриное, черри, яйцо перепелиное, сухари, соус цезарь"
+                 data-img-thumb="assets/img/thumbs/1j1m5BkuA54XrNi8_dZFE3OC4QOFNOZ08.webp" data-img-full="assets/img/full/1j1m5BkuA54XrNi8_dZFE3OC4QOFNOZ08.webp">
+                <img src="assets/img/thumbs/1j1m5BkuA54XrNi8_dZFE3OC4QOFNOZ08.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Цезарь с курицей</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Цезарь с лососем" data-price="790"
+                 data-weight="250 г" data-desc="Айсберг, лосось, черри, яйцо перепелиное, сухари, соус цезарь"
+                 data-img-thumb="assets/img/thumbs/1Ruju2FAr8sfCrrT55iT_yoZwG1zmdqDh.webp" data-img-full="assets/img/full/1Ruju2FAr8sfCrrT55iT_yoZwG1zmdqDh.webp">
+                <img src="assets/img/thumbs/1Ruju2FAr8sfCrrT55iT_yoZwG1zmdqDh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Цезарь с лососем</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Авокадо краб" data-price="650"
+                 data-weight="230 г" data-desc="Авокадо, мясо краба, черри, соус руй"
+                 data-img-thumb="assets/img/thumbs/1KbQFGHGzu4N9aAtt3kNE1g2q_lb9hRFd.webp" data-img-full="assets/img/full/1KbQFGHGzu4N9aAtt3kNE1g2q_lb9hRFd.webp">
+                <img src="assets/img/thumbs/1KbQFGHGzu4N9aAtt3kNE1g2q_lb9hRFd.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Авокадо краб</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Хрустящий баклажан" data-price="550"
+                 data-weight="330 г" data-desc="Баклажан, розовые томаты, моцарелла бэйби, кинза, сладкий чили"
+                 data-img-thumb="assets/img/thumbs/1Ej_moSa-Xzfb0Ig8Ste-yFJXjoGetJW2.webp" data-img-full="assets/img/full/1Ej_moSa-Xzfb0Ig8Ste-yFJXjoGetJW2.webp">
+                <img src="assets/img/thumbs/1Ej_moSa-Xzfb0Ig8Ste-yFJXjoGetJW2.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Хрустящий баклажан</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Гриль салат" data-price="550"
+                 data-weight="290 г" data-desc="Филе куриное, цукини, перец болгарский, шампиньоны, руккола, унаги соус"
+                 data-img-thumb="assets/img/thumbs/1N6yYesFqZOlI7SG8u-RvolzVbjNgo6Lh.webp" data-img-full="assets/img/full/1N6yYesFqZOlI7SG8u-RvolzVbjNgo6Lh.webp">
+                <img src="assets/img/thumbs/1N6yYesFqZOlI7SG8u-RvolzVbjNgo6Lh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Гриль салат</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Греческий салат" data-price="650"
+                 data-weight="330 г" data-desc="Розовые томаты, огурец, перец болгарский, каперсы, сиртаки, оливковое масло"
+                 data-img-thumb="assets/img/thumbs/1W-fFPuQ-ibqwKwF5-OZPewof6vTV4gya.webp" data-img-full="assets/img/full/1W-fFPuQ-ibqwKwF5-OZPewof6vTV4gya.webp">
+                <img src="assets/img/thumbs/1W-fFPuQ-ibqwKwF5-OZPewof6vTV4gya.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Греческий салат</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Салат с ростбифом" data-price="750"
+                 data-weight="240 г" data-desc="Ростбиф, картофель, микс салата, черри, медово-горчичная заправка"
+                 data-img-thumb="assets/img/thumbs/1AZaLoQPyUDmJuj0Zxh-OgJabZwqCpUwt.webp" data-img-full="assets/img/full/1AZaLoQPyUDmJuj0Zxh-OgJabZwqCpUwt.webp">
+                <img src="assets/img/thumbs/1AZaLoQPyUDmJuj0Zxh-OgJabZwqCpUwt.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Салат с ростбифом</div>
+                    <div class="product-price">750 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-супы" class="category-title">Супы</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Том ям" data-price="790"
+                 data-weight="550 г" data-desc="Паста том ям, сливки кокосовые, осьминог, гребешок, креветки, мидии, кальмар"
+                 data-img-thumb="assets/img/thumbs/1Hpdmk1u4nPNXuNjhDJu3j_tG2ZlBV8rv.webp" data-img-full="assets/img/full/1Hpdmk1u4nPNXuNjhDJu3j_tG2ZlBV8rv.webp">
+                <img src="assets/img/thumbs/1Hpdmk1u4nPNXuNjhDJu3j_tG2ZlBV8rv.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Том ям</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Украинский борщ с салом " data-price="750"
+                 data-weight="450 г" data-desc="Cметана, гренки, чеснок, зеленое мороженое"
+                 data-img-thumb="assets/img/thumbs/1kPfE-zmbKycShnf6buTFxw6SpNwLzBgY.webp" data-img-full="assets/img/full/1kPfE-zmbKycShnf6buTFxw6SpNwLzBgY.webp">
+                <img src="assets/img/thumbs/1kPfE-zmbKycShnf6buTFxw6SpNwLzBgY.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Украинский борщ с салом </div>
+                    <div class="product-price">750 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Велюте грибной" data-price="550"
+                 data-weight="300 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1BkjNNwK9l4iYUnB9PeXDb6cQh3LmM3zl.webp" data-img-full="assets/img/full/1BkjNNwK9l4iYUnB9PeXDb6cQh3LmM3zl.webp">
+                <img src="assets/img/thumbs/1BkjNNwK9l4iYUnB9PeXDb6cQh3LmM3zl.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Велюте грибной</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Куриный с лапшой" data-price="390"
+                 data-weight="400 г" data-desc="Куриный бульон с вермишелью и фрикадельками"
+                 data-img-thumb="assets/img/thumbs/1If9Gx1qFY_2ww1zl7xZVw7VZKxkjw-Iy.webp" data-img-full="assets/img/full/1If9Gx1qFY_2ww1zl7xZVw7VZKxkjw-Iy.webp">
+                <img src="assets/img/thumbs/1If9Gx1qFY_2ww1zl7xZVw7VZKxkjw-Iy.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Куриный с лапшой</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-пасты" class="category-title">Пасты</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Фетучини с креветкой и цукини" data-price="790"
+                 data-weight="270 г" data-desc="Паста фетучини, креветки, цукини, пармезан"
+                 data-img-thumb="assets/img/thumbs/1mOPJghQH7X_x6ga-FgZ7yx1xP9eh2HX7.webp" data-img-full="assets/img/full/1mOPJghQH7X_x6ga-FgZ7yx1xP9eh2HX7.webp">
+                <img src="assets/img/thumbs/1mOPJghQH7X_x6ga-FgZ7yx1xP9eh2HX7.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Фетучини с креветкой и цукини</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Фетучини с курицей и грибами" data-price="690"
+                 data-weight="280 г" data-desc="Паста фетучини, филе куриное, шампиньоны, пармезан"
+                 data-img-thumb="assets/img/thumbs/1OYtVurlqfdPeBO-kc0AR6KqMJOmlDyQ7.webp" data-img-full="assets/img/full/1OYtVurlqfdPeBO-kc0AR6KqMJOmlDyQ7.webp">
+                <img src="assets/img/thumbs/1OYtVurlqfdPeBO-kc0AR6KqMJOmlDyQ7.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Фетучини с курицей и грибами</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Карбонара" data-price="650"
+                 data-weight="300 г" data-desc="Спагетти, бекон, желток яичный, пармезан"
+                 data-img-thumb="assets/img/thumbs/1MjP8E10krV-LQIeUvmVpS46lUbob6UEY.webp" data-img-full="assets/img/full/1MjP8E10krV-LQIeUvmVpS46lUbob6UEY.webp">
+                <img src="assets/img/thumbs/1MjP8E10krV-LQIeUvmVpS46lUbob6UEY.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Карбонара</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Фетучини с лососем и шпинатом" data-price="890"
+                 data-weight="280 г" data-desc="Фетучини, лосось, шпинат, помидор черри, сливки"
+                 data-img-thumb="assets/img/thumbs/15tQjR50yCwUlBbGTsFMVl0m8Q0UveYYP.webp" data-img-full="assets/img/full/15tQjR50yCwUlBbGTsFMVl0m8Q0UveYYP.webp">
+                <img src="assets/img/thumbs/15tQjR50yCwUlBbGTsFMVl0m8Q0UveYYP.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Фетучини с лососем и шпинатом</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Black паста с морепродуктами" data-price="790"
+                 data-weight="380 г" data-desc="Cпагетти черные, осьминог, мидии, креветки, кальмар, гребешок"
+                 data-img-thumb="assets/img/thumbs/1AG5IMGwC5p6t3NJCIyz4u6ARV2hHmSFd.webp" data-img-full="assets/img/full/1AG5IMGwC5p6t3NJCIyz4u6ARV2hHmSFd.webp">
+                <img src="assets/img/thumbs/1AG5IMGwC5p6t3NJCIyz4u6ARV2hHmSFd.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Black паста с морепродуктами</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-удон" class="category-title">Удон</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Удон с говядиной" data-price="790"
+                 data-weight="350 г" data-desc="Лапша удон, мраморная говядина, перец болгарский, цукини, шампиньоны, лук, соус сладкий чили, соус терияки, кунжут кимчи"
+                 data-img-thumb="assets/img/thumbs/1znm-Uy2rMpEeIFKI2oRi0--rbaUchedN.webp" data-img-full="assets/img/full/1znm-Uy2rMpEeIFKI2oRi0--rbaUchedN.webp">
+                <img src="assets/img/thumbs/1znm-Uy2rMpEeIFKI2oRi0--rbaUchedN.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Удон с говядиной</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Удон с морепродуктами" data-price="890"
+                 data-weight="350 г" data-desc="Лапша удон, креветки, мидии, гребешок, кальмар, перец болгарский, цукини, шампиньоны, лук, соус сладкий чили, соус терияки, кунжут кимчи"
+                 data-img-thumb="assets/img/thumbs/1nC5TzhW1JAmeGAWLrDQhq5d2ELpsriNd.webp" data-img-full="assets/img/full/1nC5TzhW1JAmeGAWLrDQhq5d2ELpsriNd.webp">
+                <img src="assets/img/thumbs/1nC5TzhW1JAmeGAWLrDQhq5d2ELpsriNd.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Удон с морепродуктами</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Удон с курицей" data-price="590"
+                 data-weight="350 г" data-desc="Лапша удон, филе куриное, перец болгарский, цукини, шампиньоны, лук, соус сладкий чили, соус терияки, кунжут кимчи"
+                 data-img-thumb="assets/img/thumbs/1LeDIDkwQgRDupeR_Qm6hivvaAFCgD5A4.webp" data-img-full="assets/img/full/1LeDIDkwQgRDupeR_Qm6hivvaAFCgD5A4.webp">
+                <img src="assets/img/thumbs/1LeDIDkwQgRDupeR_Qm6hivvaAFCgD5A4.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Удон с курицей</div>
+                    <div class="product-price">590 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-роллы" class="category-title">Роллы</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Филадельфия с креветкой" data-price="1190"
+                 data-weight="320/50/30/10 г" data-desc="Лосось, креветка, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1ZpTHLuVv92JRlnqpkU1TDOfC9TevAblz.webp" data-img-full="assets/img/full/1ZpTHLuVv92JRlnqpkU1TDOfC9TevAblz.webp">
+                <img src="assets/img/thumbs/1ZpTHLuVv92JRlnqpkU1TDOfC9TevAblz.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Филадельфия с креветкой</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Филадельфия классическая" data-price="990"
+                 data-weight="310/50/30/10 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1Ri_ndlcZBJMfkl0UM9gKkPhcPvQ2c4AK.webp" data-img-full="assets/img/full/1Ri_ndlcZBJMfkl0UM9gKkPhcPvQ2c4AK.webp">
+                <img src="assets/img/thumbs/1Ri_ndlcZBJMfkl0UM9gKkPhcPvQ2c4AK.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Филадельфия классическая</div>
+                    <div class="product-price">990 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Красный дракон" data-price="1190"
+                 data-weight="320/50/30/10 г" data-desc="Лосось, угорь, авокадо, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1-00OpiI_T9Xs5f1isByqbzYs6TCsy60f.webp" data-img-full="assets/img/full/1-00OpiI_T9Xs5f1isByqbzYs6TCsy60f.webp">
+                <img src="assets/img/thumbs/1-00OpiI_T9Xs5f1isByqbzYs6TCsy60f.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Красный дракон</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Царский" data-price="1190"
+                 data-weight="410/50/30/10 г" data-desc="Лосось, угорь, креветка, снежный краб, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1Kg70sSdzjcY7-8p68FNAQKa7RAhZapEO.webp" data-img-full="assets/img/full/1Kg70sSdzjcY7-8p68FNAQKa7RAhZapEO.webp">
+                <img src="assets/img/thumbs/1Kg70sSdzjcY7-8p68FNAQKa7RAhZapEO.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Царский</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Эби ролл" data-price="990"
+                 data-weight="295/50/30/10 г" data-desc="Креветка, лосось, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/13b6vdSIymQlVaAAuV4fnnMp1eoNnof5F.webp" data-img-full="assets/img/full/13b6vdSIymQlVaAAuV4fnnMp1eoNnof5F.webp">
+                <img src="assets/img/thumbs/13b6vdSIymQlVaAAuV4fnnMp1eoNnof5F.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Эби ролл</div>
+                    <div class="product-price">990 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Бонито" data-price="790"
+                 data-weight="280/50/30/10 г" data-desc="Лосось, авокадо, стружка тунца, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1m3VdZrMMc2l4zLyBwE99cUoLhUCl0u_z.webp" data-img-full="assets/img/full/1m3VdZrMMc2l4zLyBwE99cUoLhUCl0u_z.webp">
+                <img src="assets/img/thumbs/1m3VdZrMMc2l4zLyBwE99cUoLhUCl0u_z.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Бонито</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Канада" data-price="1090"
+                 data-weight="300/50/30/10 г" data-desc="Угорь, лосось, огурец, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/15cxcXdOKX48CdAV0LMzt3RUwoO0CW3EJ.webp" data-img-full="assets/img/full/15cxcXdOKX48CdAV0LMzt3RUwoO0CW3EJ.webp">
+                <img src="assets/img/thumbs/15cxcXdOKX48CdAV0LMzt3RUwoO0CW3EJ.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Канада</div>
+                    <div class="product-price">1090 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Спайси креветка" data-price="890"
+                 data-weight="290/50/30/10 г" data-desc="Креветка, снежный краб, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1KLh8_s_Bs--YSZl__FXm0X-E17vRD84v.webp" data-img-full="assets/img/full/1KLh8_s_Bs--YSZl__FXm0X-E17vRD84v.webp">
+                <img src="assets/img/thumbs/1KLh8_s_Bs--YSZl__FXm0X-E17vRD84v.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Спайси креветка</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ролл модный" data-price="1490"
+                 data-weight="470/50/30/10 г" data-desc="Лосось, креветки, гуакамоле, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1DVcxIMiP3UhOXddzMeTAsyq2sF9Jxbzi.webp" data-img-full="assets/img/full/1DVcxIMiP3UhOXddzMeTAsyq2sF9Jxbzi.webp">
+                <img src="assets/img/thumbs/1DVcxIMiP3UhOXddzMeTAsyq2sF9Jxbzi.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ролл модный</div>
+                    <div class="product-price">1490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ролл дракон" data-price="790"
+                 data-weight="250/50/30/10 г" data-desc="Угорь, огурец, сыр творожный, соус терияки"
+                 data-img-thumb="assets/img/thumbs/1GXQI6rAVkmFdPeozK4onHSSMQKsGTr2A.webp" data-img-full="assets/img/full/1GXQI6rAVkmFdPeozK4onHSSMQKsGTr2A.webp">
+                <img src="assets/img/thumbs/1GXQI6rAVkmFdPeozK4onHSSMQKsGTr2A.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ролл дракон</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет фирменный" data-price="2290"
+                 data-weight="1200 г" data-desc="Ролл дракон, Спайси креветка, Филадельфия классическая"
+                 data-img-thumb="assets/img/thumbs/1XW4Gz9uS-TOqaJYxlFuEVFpmwIHUAbHb.webp" data-img-full="assets/img/full/1XW4Gz9uS-TOqaJYxlFuEVFpmwIHUAbHb.webp">
+                <img src="assets/img/thumbs/1XW4Gz9uS-TOqaJYxlFuEVFpmwIHUAbHb.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет фирменный</div>
+                    <div class="product-price">2290 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-гунканы" class="category-title">Гунканы</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Гункан с креветкой/лососем/угрем/крабом" data-price="200"
+                 data-weight="1 шт" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1S6ZV1DspBq1dYPS_mZC8MHmsUEFmfQea.webp" data-img-full="assets/img/full/1S6ZV1DspBq1dYPS_mZC8MHmsUEFmfQea.webp">
+                <img src="assets/img/thumbs/1S6ZV1DspBq1dYPS_mZC8MHmsUEFmfQea.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Гункан с креветкой/лососем/угрем/крабом</div>
+                    <div class="product-price">200 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-запеченные-роллы" class="category-title">Запеченные роллы</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Нежный с креветкой" data-price="690"
+                 data-weight="440/50/30/10 г" data-desc="Креветка, авокадо, сырная шапочка"
+                 data-img-thumb="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" data-img-full="assets/img/full/1JIDExb_NzPuExT2OEufonELykltniIJs.webp">
+                <img src="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Нежный с креветкой</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Нежный с лососем" data-price="690"
+                 data-weight="440/50/30/10 г" data-desc="Лосось, авокадо, сырная шапочка"
+                 data-img-thumb="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" data-img-full="assets/img/full/1JIDExb_NzPuExT2OEufonELykltniIJs.webp">
+                <img src="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Нежный с лососем</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Нежный с крабом" data-price="680"
+                 data-weight="440/50/30/10 г" data-desc="Снежный краб, авокадо, сырная шапочка"
+                 data-img-thumb="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" data-img-full="assets/img/full/1JIDExb_NzPuExT2OEufonELykltniIJs.webp">
+                <img src="assets/img/thumbs/1JIDExb_NzPuExT2OEufonELykltniIJs.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Нежный с крабом</div>
+                    <div class="product-price">680 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Запеченный спайси краб" data-price="790"
+                 data-weight="370/50/30/10 г" data-desc="Снежный краб, огурец, сырная шапочка, соус спайси"
+                 data-img-thumb="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" data-img-full="assets/img/full/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp">
+                <img src="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Запеченный спайси краб</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Запеченный спайси креветка" data-price="790"
+                 data-weight="370/50/30/10 г" data-desc="Креветка, огурец, сырная шапочка, соус спайси"
+                 data-img-thumb="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" data-img-full="assets/img/full/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp">
+                <img src="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Запеченный спайси креветка</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Запеченный спайси лосось" data-price="790"
+                 data-weight="370/50/30/10 г" data-desc="Лосось, огурец, сырная шапочка, соус спайси"
+                 data-img-thumb="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" data-img-full="assets/img/full/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp">
+                <img src="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Запеченный спайси лосось</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Запеченный спайси угорь" data-price="890"
+                 data-weight="370/50/30/10 г" data-desc="Угорь, огурец, сырная шапочка, соус спайси"
+                 data-img-thumb="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" data-img-full="assets/img/full/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp">
+                <img src="assets/img/thumbs/1bqwi2H9qvAoHyT7G9cxcgKUP59rt4Ouh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Запеченный спайси угорь</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Мафия" data-price="890"
+                 data-weight="270/50/30/10 г" data-desc="Лосось, угорь, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/16lejnKCWU2EFDwoKtKnCLVBstOmyXa5b.webp" data-img-full="assets/img/full/16lejnKCWU2EFDwoKtKnCLVBstOmyXa5b.webp">
+                <img src="assets/img/thumbs/16lejnKCWU2EFDwoKtKnCLVBstOmyXa5b.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Мафия</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-жареные-роллы" class="category-title">Жареные роллы</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Кето ролл" data-price="1190"
+                 data-weight="330/50/30/10 г" data-desc="Креветка, лосось, снежный краб, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1naFHbywdRxsidX-LKhmyw093NilhKWan.webp" data-img-full="assets/img/full/1naFHbywdRxsidX-LKhmyw093NilhKWan.webp">
+                <img src="assets/img/thumbs/1naFHbywdRxsidX-LKhmyw093NilhKWan.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Кето ролл</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Темпура краб" data-price="690"
+                 data-weight="280/50/30/10 г" data-desc="Снежный краб, огурец, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1_fr9bK4XxL3N4CzEcDw2vYyH0bcaGgbh.webp" data-img-full="assets/img/full/1_fr9bK4XxL3N4CzEcDw2vYyH0bcaGgbh.webp">
+                <img src="assets/img/thumbs/1_fr9bK4XxL3N4CzEcDw2vYyH0bcaGgbh.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Темпура краб</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Темпура креветка" data-price="790"
+                 data-weight="280/50/30/10 г" data-desc="Креветка, огурец, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/16l5Wu6YuLutaanFQ9Uc-gLBsqSp0j2yX.webp" data-img-full="assets/img/full/16l5Wu6YuLutaanFQ9Uc-gLBsqSp0j2yX.webp">
+                <img src="assets/img/thumbs/16l5Wu6YuLutaanFQ9Uc-gLBsqSp0j2yX.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Темпура креветка</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Темпура лосось" data-price="790"
+                 data-weight="280/50/30/10 г" data-desc="Лосось, огурец, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1x9V9Se0cJhwR8KOBSnf6a5uMG0ew2XCB.webp" data-img-full="assets/img/full/1x9V9Se0cJhwR8KOBSnf6a5uMG0ew2XCB.webp">
+                <img src="assets/img/thumbs/1x9V9Se0cJhwR8KOBSnf6a5uMG0ew2XCB.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Темпура лосось</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Темпура угорь" data-price="790"
+                 data-weight="280/50/30/10 г" data-desc="Угорь, огурец, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1cDfCk8tKy1CcdFR4jujH5MEvcoyTEbKW.webp" data-img-full="assets/img/full/1cDfCk8tKy1CcdFR4jujH5MEvcoyTEbKW.webp">
+                <img src="assets/img/thumbs/1cDfCk8tKy1CcdFR4jujH5MEvcoyTEbKW.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Темпура угорь</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Тартар ролл" data-price="890"
+                 data-weight="330/50/30/10 г" data-desc="Лосось, авокадо, сыр творожный"
+                 data-img-thumb="assets/img/thumbs/1seTApOsC8eWExh48aczHeRMZP1ME_PtC.webp" data-img-full="assets/img/full/1seTApOsC8eWExh48aczHeRMZP1ME_PtC.webp">
+                <img src="assets/img/thumbs/1seTApOsC8eWExh48aczHeRMZP1ME_PtC.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Тартар ролл</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет темпура" data-price="2090"
+                 data-weight="1800 г" data-desc="Темпура креветка, Темпура лосось, Темпура краб"
+                 data-img-thumb="assets/img/thumbs/1NAHLNrw4Zv9q7Qod5h354IISOoSPRgB7.webp" data-img-full="assets/img/full/1NAHLNrw4Zv9q7Qod5h354IISOoSPRgB7.webp">
+                <img src="assets/img/thumbs/1NAHLNrw4Zv9q7Qod5h354IISOoSPRgB7.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет темпура</div>
+                    <div class="product-price">2090 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-пицца" class="category-title">Пицца</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="4 сыра" data-price="890"
+                 data-weight="500 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/14FIvLV3iBsMZynBSmF0CKFadEqhLY_n7.webp" data-img-full="assets/img/full/14FIvLV3iBsMZynBSmF0CKFadEqhLY_n7.webp">
+                <img src="assets/img/thumbs/14FIvLV3iBsMZynBSmF0CKFadEqhLY_n7.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">4 сыра</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ветчина и грибы" data-price="890"
+                 data-weight="500 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/16hnNYcuYax4KY1Uwr2VLejxVd1zfeRnc.webp" data-img-full="assets/img/full/16hnNYcuYax4KY1Uwr2VLejxVd1zfeRnc.webp">
+                <img src="assets/img/thumbs/16hnNYcuYax4KY1Uwr2VLejxVd1zfeRnc.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ветчина и грибы</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Деревенская" data-price="890"
+                 data-weight="600 г" data-desc="Болгарский перец, чоризо, бекон, ветчина, грибы маринованные, лук красный, лук фри, моцарелла"
+                 data-img-thumb="assets/img/thumbs/1rL1WKLuLkYlerSPN0_QnKTMEDdvjntsU.webp" data-img-full="assets/img/full/1rL1WKLuLkYlerSPN0_QnKTMEDdvjntsU.webp">
+                <img src="assets/img/thumbs/1rL1WKLuLkYlerSPN0_QnKTMEDdvjntsU.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Деревенская</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Дьябло 🌶️" data-price="890"
+                 data-weight="470 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1r_N2fc1xRnM7pT2EOxTo3yCaGUbU_mg_.webp" data-img-full="assets/img/full/1r_N2fc1xRnM7pT2EOxTo3yCaGUbU_mg_.webp">
+                <img src="assets/img/thumbs/1r_N2fc1xRnM7pT2EOxTo3yCaGUbU_mg_.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Дьябло 🌶️</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Пепперони" data-price="890"
+                 data-weight="470 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1r_N2fc1xRnM7pT2EOxTo3yCaGUbU_mg_.webp" data-img-full="assets/img/full/1r_N2fc1xRnM7pT2EOxTo3yCaGUbU_mg_.webp">
+                <img src="assets/img/thumbs/1r_N2fc1xRnM7pT2EOxTo3yCaGUbU_mg_.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Пепперони</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Море" data-price="1090"
+                 data-weight="550 г" data-desc="Лосось, креветки, сыр творожный, моцарелла"
+                 data-img-thumb="assets/img/thumbs/1_vUelw8zagu8I0oArW_QyKBLvsgLuNq8.webp" data-img-full="assets/img/full/1_vUelw8zagu8I0oArW_QyKBLvsgLuNq8.webp">
+                <img src="assets/img/thumbs/1_vUelw8zagu8I0oArW_QyKBLvsgLuNq8.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Море</div>
+                    <div class="product-price">1090 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Морская с угрем" data-price="1590"
+                 data-weight="600 г" data-desc="Креветки, кальмар, лосось, угорь, сыр творожный, сыр моцарелла"
+                 data-img-thumb="assets/img/thumbs/19UcRg00yVAUyhzuinbcfZ2KAN2Q2a0PN.webp" data-img-full="assets/img/full/19UcRg00yVAUyhzuinbcfZ2KAN2Q2a0PN.webp">
+                <img src="assets/img/thumbs/19UcRg00yVAUyhzuinbcfZ2KAN2Q2a0PN.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Морская с угрем</div>
+                    <div class="product-price">1590 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Охотничья" data-price="890"
+                 data-weight="520 г" data-desc="Охотничьи колбаски, бекон, лук красный, соус bbq, маринованные огурцы, моцарелла"
+                 data-img-thumb="assets/img/thumbs/1K08CnO4YK4OTUAKnMvfSmlgEMhiRpcs3.webp" data-img-full="assets/img/full/1K08CnO4YK4OTUAKnMvfSmlgEMhiRpcs3.webp">
+                <img src="assets/img/thumbs/1K08CnO4YK4OTUAKnMvfSmlgEMhiRpcs3.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Охотничья</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-добавки-к-пиццам" class="category-title">Добавки к пиццам</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Халапеньо" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Халапеньо</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Сыр Чеддер" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Сыр Чеддер</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Чоризо" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Чоризо</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бекон" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бекон</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-закуски" class="category-title">Закуски</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Тартар из лосося с авокадо" data-price="1190"
+                 data-weight="280 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1uJaYgwLjKPDl5rYKmnsjJcLWEabnunXj.webp" data-img-full="assets/img/full/1uJaYgwLjKPDl5rYKmnsjJcLWEabnunXj.webp">
+                <img src="assets/img/thumbs/1uJaYgwLjKPDl5rYKmnsjJcLWEabnunXj.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Тартар из лосося с авокадо</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Тартар из телятины" data-price="650"
+                 data-weight="280 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1-C-MjAg5EFbONxyUjAFUuiX9p1819_Q8.webp" data-img-full="assets/img/full/1-C-MjAg5EFbONxyUjAFUuiX9p1819_Q8.webp">
+                <img src="assets/img/thumbs/1-C-MjAg5EFbONxyUjAFUuiX9p1819_Q8.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Тартар из телятины</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Брускетта с семгой" data-price="650"
+                 data-weight="250 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1BQDWfbkL0k6bymsW2dCph4wN4xSVobUf.webp" data-img-full="assets/img/full/1BQDWfbkL0k6bymsW2dCph4wN4xSVobUf.webp">
+                <img src="assets/img/thumbs/1BQDWfbkL0k6bymsW2dCph4wN4xSVobUf.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Брускетта с семгой</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Брускетта с ростбифом" data-price="650"
+                 data-weight="210 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1aI90Ilo8Dk1r_rvBxcV_1AxKEnad7FVe.webp" data-img-full="assets/img/full/1aI90Ilo8Dk1r_rvBxcV_1AxKEnad7FVe.webp">
+                <img src="assets/img/thumbs/1aI90Ilo8Dk1r_rvBxcV_1AxKEnad7FVe.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Брускетта с ростбифом</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Брускетта с дор блю и грушей" data-price="450"
+                 data-weight="160 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1NtWT3D2U9-ZJjpPO8m3zQD3DoqgqVz83.webp" data-img-full="assets/img/full/1NtWT3D2U9-ZJjpPO8m3zQD3DoqgqVz83.webp">
+                <img src="assets/img/thumbs/1NtWT3D2U9-ZJjpPO8m3zQD3DoqgqVz83.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Брускетта с дор блю и грушей</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Мясная нарезка" data-price="1190"
+                 data-weight="220 г" data-desc="Ростбиф, брезаола, салями, свинина сыровяленая"
+                 data-img-thumb="assets/img/thumbs/1BH9YJ84SDjiCuvU3s3y05n45oc77fhhC.webp" data-img-full="assets/img/full/1BH9YJ84SDjiCuvU3s3y05n45oc77fhhC.webp">
+                <img src="assets/img/thumbs/1BH9YJ84SDjiCuvU3s3y05n45oc77fhhC.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Мясная нарезка</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сырная нарезка" data-price="1190"
+                 data-weight="360 г" data-desc="Сыр чеддер, пармезан, дор блю, моцарелла, эмменталер"
+                 data-img-thumb="assets/img/thumbs/1ixldSE9sbjPe33NYXHreix6K4BeOonE7.webp" data-img-full="assets/img/full/1ixldSE9sbjPe33NYXHreix6K4BeOonE7.webp">
+                <img src="assets/img/thumbs/1ixldSE9sbjPe33NYXHreix6K4BeOonE7.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сырная нарезка</div>
+                    <div class="product-price">1190 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Овощная нарезка" data-price="490"
+                 data-weight="500 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1L_MV6ewMRZy1lkb8jJovty528jHzlym2.webp" data-img-full="assets/img/full/1L_MV6ewMRZy1lkb8jJovty528jHzlym2.webp">
+                <img src="assets/img/thumbs/1L_MV6ewMRZy1lkb8jJovty528jHzlym2.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Овощная нарезка</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сало с горчицей" data-price="610"
+                 data-weight="100/80 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1cJEG6fProN9na5E75yqf7wHX6LxlzyZb.webp" data-img-full="assets/img/full/1cJEG6fProN9na5E75yqf7wHX6LxlzyZb.webp">
+                <img src="assets/img/thumbs/1cJEG6fProN9na5E75yqf7wHX6LxlzyZb.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сало с горчицей</div>
+                    <div class="product-price">610 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Гренки с салом" data-price="490"
+                 data-weight="180 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1zTQSjvqEGvIm9I7jQ5rTJ2l_LStmTTIO.webp" data-img-full="assets/img/full/1zTQSjvqEGvIm9I7jQ5rTJ2l_LStmTTIO.webp">
+                <img src="assets/img/thumbs/1zTQSjvqEGvIm9I7jQ5rTJ2l_LStmTTIO.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Гренки с салом</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сырные палочки" data-price="490"
+                 data-weight="200 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1JRRIMAHMh7P-WfzSSM-B9sYeF2GqwbJf.webp" data-img-full="assets/img/full/1JRRIMAHMh7P-WfzSSM-B9sYeF2GqwbJf.webp">
+                <img src="assets/img/thumbs/1JRRIMAHMh7P-WfzSSM-B9sYeF2GqwbJf.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сырные палочки</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-горячие-закуски" class="category-title">Горячие закуски</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Мидии в соусе дор блю" data-price="790"
+                 data-weight="350 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1Ccz4S9ugni7jTgk171yhrtWFY8cD_04Z.webp" data-img-full="assets/img/full/1Ccz4S9ugni7jTgk171yhrtWFY8cD_04Z.webp">
+                <img src="assets/img/thumbs/1Ccz4S9ugni7jTgk171yhrtWFY8cD_04Z.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Мидии в соусе дор блю</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Мидии в соусе том-ям" data-price="790"
+                 data-weight="350 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/16CQ-2CjAZ25TbJDfF0fyeZroxQCzxDAl.webp" data-img-full="assets/img/full/16CQ-2CjAZ25TbJDfF0fyeZroxQCzxDAl.webp">
+                <img src="assets/img/thumbs/16CQ-2CjAZ25TbJDfF0fyeZroxQCzxDAl.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Мидии в соусе том-ям</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Мидии в чесночном соусе" data-price="790"
+                 data-weight="350 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/18s_Ees_b-qRX_ae2ck8ltyl316dER0R1.webp" data-img-full="assets/img/full/18s_Ees_b-qRX_ae2ck8ltyl316dER0R1.webp">
+                <img src="assets/img/thumbs/18s_Ees_b-qRX_ae2ck8ltyl316dER0R1.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Мидии в чесночном соусе</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ребра BBQ" data-price="290"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp" data-img-full="assets/img/full/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp">
+                <img src="assets/img/thumbs/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ребра BBQ</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ребра в медово-горчичном соусе" data-price="290"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1o-cpxJh9RJC6wT7fOt6ef1SZnbqLZznY.webp" data-img-full="assets/img/full/1o-cpxJh9RJC6wT7fOt6ef1SZnbqLZznY.webp">
+                <img src="assets/img/thumbs/1o-cpxJh9RJC6wT7fOt6ef1SZnbqLZznY.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ребра в медово-горчичном соусе</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Крылья BBQ" data-price="490"
+                 data-weight="240/40 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp" data-img-full="assets/img/full/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp">
+                <img src="assets/img/thumbs/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Крылья BBQ</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Крылья в медово-горчичном соусе" data-price="490"
+                 data-weight="240/40 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp" data-img-full="assets/img/full/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp">
+                <img src="assets/img/thumbs/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Крылья в медово-горчичном соусе</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет номер 1" data-price="1490"
+                 data-weight="790 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1LKe0DDp3YXMdMffhLOQe1RUuWW6W3rfZ.webp" data-img-full="assets/img/full/1LKe0DDp3YXMdMffhLOQe1RUuWW6W3rfZ.webp">
+                <img src="assets/img/thumbs/1LKe0DDp3YXMdMffhLOQe1RUuWW6W3rfZ.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет номер 1</div>
+                    <div class="product-price">1490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет номер 2" data-price="1590"
+                 data-weight="1 кг" data-desc=""
+                 data-img-thumb="assets/img/thumbs/17o6ayBZJ1m4_EfXDyZUgOBIvvZJUAnfa.webp" data-img-full="assets/img/full/17o6ayBZJ1m4_EfXDyZUgOBIvvZJUAnfa.webp">
+                <img src="assets/img/thumbs/17o6ayBZJ1m4_EfXDyZUgOBIvvZJUAnfa.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет номер 2</div>
+                    <div class="product-price">1590 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет номер 3" data-price="1590"
+                 data-weight="1 кг" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1u8If1nSAQA83MxzhLSLZO7zbcIL2IzrI.webp" data-img-full="assets/img/full/1u8If1nSAQA83MxzhLSLZO7zbcIL2IzrI.webp">
+                <img src="assets/img/thumbs/1u8If1nSAQA83MxzhLSLZO7zbcIL2IzrI.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет номер 3</div>
+                    <div class="product-price">1590 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет тандыр" data-price="1890"
+                 data-weight="1 кг" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1tFzJJ7YRbEIQJpqosvXGF-udDmFG4RAR.webp" data-img-full="assets/img/full/1tFzJJ7YRbEIQJpqosvXGF-udDmFG4RAR.webp">
+                <img src="assets/img/thumbs/1tFzJJ7YRbEIQJpqosvXGF-udDmFG4RAR.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет тандыр</div>
+                    <div class="product-price">1890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Стрипсы" data-price="390"
+                 data-weight="270 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1Iz9x2gVX0IMl6VvqP2Nn1vCLVhjwU6pT.webp" data-img-full="assets/img/full/1Iz9x2gVX0IMl6VvqP2Nn1vCLVhjwU6pT.webp">
+                <img src="assets/img/thumbs/1Iz9x2gVX0IMl6VvqP2Nn1vCLVhjwU6pT.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Стрипсы</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Картофель фри" data-price="250"
+                 data-weight="140/50 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1pZc3BNnAQtlj4mCVDyt0vVs9kGiRcf8S.webp" data-img-full="assets/img/full/1pZc3BNnAQtlj4mCVDyt0vVs9kGiRcf8S.webp">
+                <img src="assets/img/thumbs/1pZc3BNnAQtlj4mCVDyt0vVs9kGiRcf8S.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Картофель фри</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Темпура креветки" data-price="750"
+                 data-weight="210 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1rd0UBYWVlErGfLlt9bzhEbZcd1eZBSkT.webp" data-img-full="assets/img/full/1rd0UBYWVlErGfLlt9bzhEbZcd1eZBSkT.webp">
+                <img src="assets/img/thumbs/1rd0UBYWVlErGfLlt9bzhEbZcd1eZBSkT.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Темпура креветки</div>
+                    <div class="product-price">750 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Кольца кальмара" data-price="450"
+                 data-weight="240 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1VRCOG-cRXiFl0EgqjNl3lRR2JZ6sPJb1.webp" data-img-full="assets/img/full/1VRCOG-cRXiFl0EgqjNl3lRR2JZ6sPJb1.webp">
+                <img src="assets/img/thumbs/1VRCOG-cRXiFl0EgqjNl3lRR2JZ6sPJb1.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Кольца кальмара</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Креветки жареные" data-price="1490"
+                 data-weight="500 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1T0MQjODFQL8G22HFhhHlNqSPiUV6MI4x.webp" data-img-full="assets/img/full/1T0MQjODFQL8G22HFhhHlNqSPiUV6MI4x.webp">
+                <img src="assets/img/thumbs/1T0MQjODFQL8G22HFhhHlNqSPiUV6MI4x.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Креветки жареные</div>
+                    <div class="product-price">1490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Креветки отварные" data-price="1490"
+                 data-weight="500 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/13jRnZVkV0XKlxscE-Loq_ReKFSj7Cp0f.webp" data-img-full="assets/img/full/13jRnZVkV0XKlxscE-Loq_ReKFSj7Cp0f.webp">
+                <img src="assets/img/thumbs/13jRnZVkV0XKlxscE-Loq_ReKFSj7Cp0f.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Креветки отварные</div>
+                    <div class="product-price">1490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Луковые кольца" data-price="250"
+                 data-weight="200 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1OTxTU8C1MGUJJoZDGVA-V0m65r9VOMoW.webp" data-img-full="assets/img/full/1OTxTU8C1MGUJJoZDGVA-V0m65r9VOMoW.webp">
+                <img src="assets/img/thumbs/1OTxTU8C1MGUJJoZDGVA-V0m65r9VOMoW.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Луковые кольца</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Гренки чесночные" data-price="290"
+                 data-weight="230 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/11B0okE1pI35JVrsd2vSxDYDy3kdk-1G8.webp" data-img-full="assets/img/full/11B0okE1pI35JVrsd2vSxDYDy3kdk-1G8.webp">
+                <img src="assets/img/thumbs/11B0okE1pI35JVrsd2vSxDYDy3kdk-1G8.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Гренки чесночные</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Тигровые креветки" data-price="2890"
+                 data-weight="550 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1tSUi_GqNBBCWOJTUQoXQHgfO7T7LV8-D.webp" data-img-full="assets/img/full/1tSUi_GqNBBCWOJTUQoXQHgfO7T7LV8-D.webp">
+                <img src="assets/img/thumbs/1tSUi_GqNBBCWOJTUQoXQHgfO7T7LV8-D.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Тигровые креветки</div>
+                    <div class="product-price">2890 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-тандыр-меню-от-200-гр" class="category-title">Тандыр меню (от 200 гр)</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ребра тандыр" data-price="290"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp" data-img-full="assets/img/full/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp">
+                <img src="assets/img/thumbs/1RJnyExAfsTFb1kzT0MCVgWs15QjQbnbo.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ребра тандыр</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Крылья тандыр" data-price="250"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp" data-img-full="assets/img/full/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp">
+                <img src="assets/img/thumbs/13_gtZ3cZAglx2xzoJi3u6njdKlsg-fDZ.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Крылья тандыр</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Филе бедра" data-price="290"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/18Vh84Odje2ee8Mjn3vSboxe-QvLRL-gD.webp" data-img-full="assets/img/full/18Vh84Odje2ee8Mjn3vSboxe-QvLRL-gD.webp">
+                <img src="assets/img/thumbs/18Vh84Odje2ee8Mjn3vSboxe-QvLRL-gD.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Филе бедра</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Ребра с салом" data-price="290"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1lQKB_9bQqqY4ZhTfu4fo--Mrd3Br_ajF.webp" data-img-full="assets/img/full/1lQKB_9bQqqY4ZhTfu4fo--Mrd3Br_ajF.webp">
+                <img src="assets/img/thumbs/1lQKB_9bQqqY4ZhTfu4fo--Mrd3Br_ajF.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Ребра с салом</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Сет тандыр" data-price="1890"
+                 data-weight="1400 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1tFzJJ7YRbEIQJpqosvXGF-udDmFG4RAR.webp" data-img-full="assets/img/full/1tFzJJ7YRbEIQJpqosvXGF-udDmFG4RAR.webp">
+                <img src="assets/img/thumbs/1tFzJJ7YRbEIQJpqosvXGF-udDmFG4RAR.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Сет тандыр</div>
+                    <div class="product-price">1890 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-овощи-от-100-гр" class="category-title">Овощи (от 100 гр)</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Шампиньоны" data-price="180"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Шампиньоны</div>
+                    <div class="product-price">180 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Болгарский перец" data-price="180"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Болгарский перец</div>
+                    <div class="product-price">180 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Баклажан" data-price="180"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Баклажан</div>
+                    <div class="product-price">180 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Цукини" data-price="180"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Цукини</div>
+                    <div class="product-price">180 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-основные-блюда" class="category-title">Основные блюда</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Бифштекс из мраморной говядины" data-price="900"
+                 data-weight="300 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1WO0D6btzwP7tV6hjGi7LPup6p490Fi_z.webp" data-img-full="assets/img/full/1WO0D6btzwP7tV6hjGi7LPup6p490Fi_z.webp">
+                <img src="assets/img/thumbs/1WO0D6btzwP7tV6hjGi7LPup6p490Fi_z.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Бифштекс из мраморной говядины</div>
+                    <div class="product-price">900 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Бефстроганов" data-price="790"
+                 data-weight="340 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1kSGukXLrPYW8jhKd5AbMNjMeIVHz0tg6.webp" data-img-full="assets/img/full/1kSGukXLrPYW8jhKd5AbMNjMeIVHz0tg6.webp">
+                <img src="assets/img/thumbs/1kSGukXLrPYW8jhKd5AbMNjMeIVHz0tg6.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Бефстроганов</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Курица по-тоскански" data-price="750"
+                 data-weight="280 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1A1s4H5s254Ig1t18j5HAgB1CtuP13kZQ.webp" data-img-full="assets/img/full/1A1s4H5s254Ig1t18j5HAgB1CtuP13kZQ.webp">
+                <img src="assets/img/thumbs/1A1s4H5s254Ig1t18j5HAgB1CtuP13kZQ.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Курица по-тоскански</div>
+                    <div class="product-price">750 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Телячьи щеки в соусе демиглас" data-price="890"
+                 data-weight="300 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1pSZzHq5e5tb2FUXp0FZeQ6E5R0yodLT6.webp" data-img-full="assets/img/full/1pSZzHq5e5tb2FUXp0FZeQ6E5R0yodLT6.webp">
+                <img src="assets/img/thumbs/1pSZzHq5e5tb2FUXp0FZeQ6E5R0yodLT6.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Телячьи щеки в соусе демиглас</div>
+                    <div class="product-price">890 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Лосось с брокколи в соусе дор блю" data-price="1690"
+                 data-weight="360 г" data-desc=""
+                 data-img-thumb="assets/img/thumbs/1KDaSUb-Pbs6ov5MPW5Co6uXD92d5Mx72.webp" data-img-full="assets/img/full/1KDaSUb-Pbs6ov5MPW5Co6uXD92d5Mx72.webp">
+                <img src="assets/img/thumbs/1KDaSUb-Pbs6ov5MPW5Co6uXD92d5Mx72.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Лосось с брокколи в соусе дор блю</div>
+                    <div class="product-price">1690 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-бургеры" class="category-title">Бургеры</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Бургер с цыпленком" data-price="750"
+                 data-weight="500 г" data-desc="Булочка бриошь, сыр чеддер, филе куриное, соус фирменный, лук ялтинский, помидор, айсберг, картошка фри"
+                 data-img-thumb="assets/img/thumbs/1dw3b4iAAatPuWaM9BQDtI54XWX9PtGin.webp" data-img-full="assets/img/full/1dw3b4iAAatPuWaM9BQDtI54XWX9PtGin.webp">
+                <img src="assets/img/thumbs/1dw3b4iAAatPuWaM9BQDtI54XWX9PtGin.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Бургер с цыпленком</div>
+                    <div class="product-price">750 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Чизбургер с говядиной" data-price="850"
+                 data-weight="500 г" data-desc="Булочка бриошь, котлеты из мраморной говядины, бекон, сыр чеддер, соус фирменный, лук ялтинский, подмидор, айсберг, картошка фри"
+                 data-img-thumb="assets/img/thumbs/1YyteLAJJVXxZeoNU6wGcM2yQzx7VeZhO.webp" data-img-full="assets/img/full/1YyteLAJJVXxZeoNU6wGcM2yQzx7VeZhO.webp">
+                <img src="assets/img/thumbs/1YyteLAJJVXxZeoNU6wGcM2yQzx7VeZhO.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Чизбургер с говядиной</div>
+                    <div class="product-price">850 ₽</div>
+                </div>
+            </div>
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Шеф бургер" data-price="990"
+                 data-weight="790 г" data-desc="Булочка бриошь, филе бедра тандыр, фирменный соус, лук, помидор, айсберг, соус чиз виз"
+                 data-img-thumb="assets/img/thumbs/1vRbhzk9rAZUN6x4GvbBOyElG2u2g7JB3.webp" data-img-full="assets/img/full/1vRbhzk9rAZUN6x4GvbBOyElG2u2g7JB3.webp">
+                <img src="assets/img/thumbs/1vRbhzk9rAZUN6x4GvbBOyElG2u2g7JB3.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Шеф бургер</div>
+                    <div class="product-price">990 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-добавки-к-бургерам" class="category-title">Добавки к бургерам</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Халапеньо" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Халапеньо</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Сыр Чеддер" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Сыр Чеддер</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Чоризо" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Чоризо</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бекон" data-price="100"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бекон</div>
+                    <div class="product-price">100 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-десерты" class="category-title">Десерты</h2>
+<div class="menu-grid">
+            <div class="product-card" onclick="openModal(this)"
+                 data-name="Шоколадный фондан" data-price="490"
+                 data-weight="" data-desc=""
+                 data-img-thumb="assets/img/thumbs/18zo3QOH5w2lbCRKqRy42-AwvJrcDbzyT.webp" data-img-full="assets/img/full/18zo3QOH5w2lbCRKqRy42-AwvJrcDbzyT.webp">
+                <img src="assets/img/thumbs/18zo3QOH5w2lbCRKqRy42-AwvJrcDbzyT.webp" class="product-img" loading="lazy">
+                <div class="product-info">
+                    <div class="product-title">Шоколадный фондан</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Фрукты сезонные" data-price="150"
+                 data-weight="100 г" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Фрукты сезонные</div>
+                    <div class="product-price">150 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-соусы" class="category-title">Соусы</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Фирменный" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Фирменный</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Сырный" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Сырный</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Устричный" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Устричный</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Кетчуп" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Кетчуп</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Медово-горчичный" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Медово-горчичный</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Чесночный" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Чесночный</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="BBQ" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">BBQ</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Брусничный" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Брусничный</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Шри рача" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Шри рача</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Спайси" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Спайси</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Терияки" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Терияки</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Цезарь" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Цезарь</div>
+                    
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ореховый" data-price=""
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ореховый</div>
+                    
+                </div>
+            </div></div>
+</div>
+        <div id="content-bar" style="display: none;"><h2 id="cat-коктейли-классика" class="category-title">Коктейли классика</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Беллини" data-price="590"
+                 data-weight="150 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Беллини</div>
+                    <div class="product-price">590 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Негрони" data-price="650"
+                 data-weight="150 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Негрони</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Апероль Спритц" data-price="690"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Апероль Спритц</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Виски сауэр" data-price="650"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Виски сауэр</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Джон Коллинз" data-price="650"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Джон Коллинз</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Лонг-Айленд" data-price="650"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Лонг-Айленд</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мохито" data-price="650"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мохито</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Секс на пляже" data-price="650"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Секс на пляже</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Текила Санрайз" data-price="690"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Текила Санрайз</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Маргарита" data-price="650"
+                 data-weight="150 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Маргарита</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-авторские-коктейли" class="category-title">Авторские коктейли</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Модный фирменный" data-price="790"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Модный фирменный</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Тай" data-price="690"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Тай</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Над облаками" data-price="690"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Над облаками</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Майами" data-price="690"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Майами</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Харбин" data-price="690"
+                 data-weight="300 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Харбин</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Пич сауэр" data-price="690"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Пич сауэр</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Апероль черри" data-price="690"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Апероль черри</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мамина рыбка" data-price="690"
+                 data-weight="230 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мамина рыбка</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Клубничная Маргарита" data-price="690"
+                 data-weight="150 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Клубничная Маргарита</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Зеленая фея" data-price="850"
+                 data-weight="230 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Зеленая фея</div>
+                    <div class="product-price">850 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-шоты" class="category-title">Шоты</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Б-52" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Б-52</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Б-53" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Б-53</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Баунти" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Баунти</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Барби" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Барби</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Медуза" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Медуза</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Облако" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Облако</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Хиросима" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Хиросима</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-сеты-шотов" class="category-title">Сеты шотов</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Форрест Гамп" data-price="1490/2400"
+                 data-weight="6/10 шт" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Форрест Гамп</div>
+                    <div class="product-price">1490/2400 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Настойки фирменные" data-price="1490/2400"
+                 data-weight="6/10 шт" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Настойки фирменные</div>
+                    <div class="product-price">1490/2400 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-вино-белое" class="category-title">Вино белое</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Нуволе сухое Россия" data-price="390/1950"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Нуволе сухое Россия</div>
+                    <div class="product-price">390/1950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Блан сухое Россия" data-price="390/1950"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Блан сухое Россия</div>
+                    <div class="product-price">390/1950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Алазани полусладкое Грузия" data-price="390/1950"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Алазани полусладкое Грузия</div>
+                    <div class="product-price">390/1950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Пино Гриджио сухое Италия" data-price="650/3250"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Пино Гриджио сухое Италия</div>
+                    <div class="product-price">650/3250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Стейквайн Торронтес полусухое Аргентина" data-price="690/3450"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Стейквайн Торронтес полусухое Аргентина</div>
+                    <div class="product-price">690/3450 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-красное" class="category-title">Красное</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Локантита Мерло Каберне Франк сух. Россия" data-price="390/1950"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Локантита Мерло Каберне Франк сух. Россия</div>
+                    <div class="product-price">390/1950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Алазани Полусладкое Грузия" data-price="390/1950"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Алазани Полусладкое Грузия</div>
+                    <div class="product-price">390/1950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Стейквайн Мальбек полусухое Аргентина" data-price="690/3450"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Стейквайн Мальбек полусухое Аргентина</div>
+                    <div class="product-price">690/3450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Кьянти сухое Италия" data-price="750/3750"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Кьянти сухое Италия</div>
+                    <div class="product-price">750/3750 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-розовое" class="category-title">Розовое</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Пино Гриджио полусухое Италия" data-price="750/3750"
+                 data-weight="150/750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Пино Гриджио полусухое Италия</div>
+                    <div class="product-price">750/3750 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-коньяк-и-бренди" class="category-title">Коньяк и бренди</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бодуен ВСОП" data-price="500"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бодуен ВСОП</div>
+                    <div class="product-price">500 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мартель ВС" data-price="750"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мартель ВС</div>
+                    <div class="product-price">750 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бисквит Дюбуше ВС" data-price="850"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бисквит Дюбуше ВС</div>
+                    <div class="product-price">850 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-игристые-вина" class="category-title">Игристые вина</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Абрау-Дюрсо полусладкое Россия" data-price="1690"
+                 data-weight="750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Абрау-Дюрсо полусладкое Россия</div>
+                    <div class="product-price">1690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Абрау-Дюрсо брют Россия" data-price="1690"
+                 data-weight="750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Абрау-Дюрсо брют Россия</div>
+                    <div class="product-price">1690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бруни Просекко брют Италия" data-price="2950"
+                 data-weight="750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бруни Просекко брют Италия</div>
+                    <div class="product-price">2950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бруни Кюве Дольче сладкое Италия" data-price="2950"
+                 data-weight="750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бруни Кюве Дольче сладкое Италия</div>
+                    <div class="product-price">2950 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мартини Асти Италия" data-price="3490"
+                 data-weight="750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мартини Асти Италия</div>
+                    <div class="product-price">3490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мартини Просекко Розе Италия" data-price="3490"
+                 data-weight="750 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мартини Просекко Розе Италия</div>
+                    <div class="product-price">3490 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-шампанское" class="category-title">Шампанское</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Моэт &amp; Шандон Империал брют Франция" data-price="17900"
+                 data-weight="" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Моэт & Шандон Империал брют Франция</div>
+                    <div class="product-price">17900 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-пиво" class="category-title">Пиво</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Классическое" data-price="180/250"
+                 data-weight="300/500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Классическое</div>
+                    <div class="product-price">180/250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Фирменное светлое" data-price="250/390"
+                 data-weight="300/500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Фирменное светлое</div>
+                    <div class="product-price">250/390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Фирменное нефильтрованное" data-price="250/390"
+                 data-weight="300/500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Фирменное нефильтрованное</div>
+                    <div class="product-price">250/390 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-пиво-бутылка" class="category-title">Пиво бутылка</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Корона Экстра" data-price="490"
+                 data-weight="350 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Корона Экстра</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Белый кролик нефильтрованное" data-price="390"
+                 data-weight="500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Белый кролик нефильтрованное</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Два бобра темное фильтрованное" data-price="390"
+                 data-weight="500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Два бобра темное фильтрованное</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Два бобра светлое фильтрованное" data-price="390"
+                 data-weight="500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Два бобра светлое фильтрованное</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Крушовице Б/А" data-price="250"
+                 data-weight="300 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Крушовице Б/А</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-водка" class="category-title">Водка</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Царская оригинальная" data-price="250"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Царская оригинальная</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Царская золотая" data-price="290"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Царская золотая</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Романов" data-price="290"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Романов</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Нихао Хао Чи" data-price="250"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Нихао Хао Чи</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Нихао танжерин" data-price="250"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Нихао танжерин</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Чистые Росы" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Чистые Росы</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Белуга Нобл" data-price="450"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Белуга Нобл</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мон Блан" data-price="550"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мон Блан</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-виски" class="category-title">Виски</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Джим Бим Америка" data-price="450"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Джим Бим Америка</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Джим Бим Хани Америка" data-price="550"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Джим Бим Хани Америка</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Джек Дэниелс Америка" data-price="550"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Джек Дэниелс Америка</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Баллантайнс Файнест Шотландия" data-price="490"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Баллантайнс Файнест Шотландия</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Чивас Ригал 12 лет Шотландия" data-price="690"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Чивас Ригал 12 лет Шотландия</div>
+                    <div class="product-price">690 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Манки Шолдер Шотландия" data-price="850"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Манки Шолдер Шотландия</div>
+                    <div class="product-price">850 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Джемесон Ирландия" data-price="550"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Джемесон Ирландия</div>
+                    <div class="product-price">550 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-текила" class="category-title">Текила</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ранчо Алегре" data-price="530"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ранчо Алегре</div>
+                    <div class="product-price">530 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-ром" class="category-title">Ром</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бакарди Оакхарт" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бакарди Оакхарт</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Гавана Клаб" data-price="450"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Гавана Клаб</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-джин" class="category-title">Джин</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Хопперс" data-price="290"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Хопперс</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Босфорд" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Босфорд</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Сайгон Байгур" data-price="790"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Сайгон Байгур</div>
+                    <div class="product-price">790 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-аперитив-ликер-вермут" class="category-title">Аперитив/ликер/вермут</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мартини (Бьянко, Россо, Фиеро)" data-price="290"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мартини (Бьянко, Россо, Фиеро)</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Абсент" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Абсент</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Самбука" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Самбука</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Бехеровка" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Бехеровка</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ягермайстер" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ягермайстер</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Кампари" data-price="390"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Кампари</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-лимонады" class="category-title">Лимонады</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Манго-маракуйя" data-price="450/990"
+                 data-weight="400/1000 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Манго-маракуйя</div>
+                    <div class="product-price">450/990 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Облепиха-миндаль" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Облепиха-миндаль</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Цитрусовый" data-price="450/990"
+                 data-weight="400/1000 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Цитрусовый</div>
+                    <div class="product-price">450/990 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ягодный" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ягодный</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Мохито Б/А" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Мохито Б/А</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Алоэ-клубника" data-price="450/990"
+                 data-weight="400/1000 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Алоэ-клубника</div>
+                    <div class="product-price">450/990 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-смузи" class="category-title">Смузи</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ягодный" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ягодный</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Банан-клубника" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Банан-клубника</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-фреши" class="category-title">Фреши</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Апельсиновый" data-price="390"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Апельсиновый</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Грейпфрутовый" data-price="390"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Грейпфрутовый</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Яблочный" data-price="390"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Яблочный</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Морковный" data-price="390"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Морковный</div>
+                    <div class="product-price">390 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-чай" class="category-title">Чай</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Листовой в ассортименте" data-price="490"
+                 data-weight="720 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Листовой в ассортименте</div>
+                    <div class="product-price">490 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-чай-фирменный" class="category-title">Чай фирменный</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Тропический" data-price="650"
+                 data-weight="800 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Тропический</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Облепиховый" data-price="650"
+                 data-weight="800 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Облепиховый</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ягодный" data-price="650"
+                 data-weight="800 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ягодный</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Клубничный" data-price="650"
+                 data-weight="800 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Клубничный</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Имбирно-цитрусовый" data-price="650"
+                 data-weight="800 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Имбирно-цитрусовый</div>
+                    <div class="product-price">650 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-холодный-чай" class="category-title">Холодный чай</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Персик-базилик" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Персик-базилик</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Грейпфрутовый" data-price="450"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Грейпфрутовый</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-кофе" class="category-title">Кофе</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Эспрессо" data-price="200"
+                 data-weight="50 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Эспрессо</div>
+                    <div class="product-price">200 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Американо" data-price="200"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Американо</div>
+                    <div class="product-price">200 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Капучино" data-price="250"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Капучино</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Латте" data-price="250"
+                 data-weight="200 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Латте</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-холодный-кофе" class="category-title">Холодный кофе</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Фраппе" data-price="350"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Фраппе</div>
+                    <div class="product-price">350 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Айс латте" data-price="350"
+                 data-weight="400 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Айс латте</div>
+                    <div class="product-price">350 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-молочный-коктейли" class="category-title">Молочный коктейли</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Орео-шейк" data-price="450"
+                 data-weight="300 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Орео-шейк</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Банановый" data-price="450"
+                 data-weight="300 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Банановый</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Ванильный" data-price="450"
+                 data-weight="300 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Ванильный</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Клубничный" data-price="450"
+                 data-weight="300 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Клубничный</div>
+                    <div class="product-price">450 ₽</div>
+                </div>
+            </div></div>
+<h2 id="cat-освежающие-напитки" class="category-title">Освежающие напитки</h2>
+<div class="menu-grid">
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Кока-кола" data-price="290"
+                 data-weight="330 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Кока-кола</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Адреналин Ж/Б" data-price="290"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Адреналин Ж/Б</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Эвервесс в ассортименте" data-price="200"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Эвервесс в ассортименте</div>
+                    <div class="product-price">200 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Боржоми С/Б" data-price="290"
+                 data-weight="500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Боржоми С/Б</div>
+                    <div class="product-price">290 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Тассай С/Б" data-price="250"
+                 data-weight="450 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Тассай С/Б</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Джермук" data-price="250"
+                 data-weight="500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Джермук</div>
+                    <div class="product-price">250 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Тбау С/Б" data-price="200"
+                 data-weight="500 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Тбау С/Б</div>
+                    <div class="product-price">200 ₽</div>
+                </div>
+            </div>
+            <div class="product-card no-image" onclick="openModal(this)"
+                 data-name="Сок в ассортименте" data-price="200"
+                 data-weight="250 мл" data-desc=""
+                 data-img-thumb="" data-img-full="">
+                
+                <div class="product-info">
+                    <div class="product-title">Сок в ассортименте</div>
+                    <div class="product-price">200 ₽</div>
+                </div>
+            </div></div>
+</div>
+    </div>
+
+    <footer>
+        <a href="menu_text.pdf" target="_blank" class="download-btn">
+            <svg class="download-icon" viewBox="0 0 24 24">
+                <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 2h14v2H5v-2z" />
+            </svg>
+            Скачать меню (PDF)
+        </a>
+        <a href="tel:+79888886889" class="footer-phone">+7 988 888-68-89</a>
+        <p class="footer-warning">
+            Просим бережно относиться к планшету. <br>
+            При повреждении устройства взимается компенсация — 15 000 ₽
+        </p>
+    </footer>
+
+    <div id="modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="close-btn" onclick="closeModal()">×</div>
+            <div id="modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const SW_CACHE_NAME = 'modnyi-v2'; // Должно совпадать с CACHE_NAME в sw.js
+
+        function switchTab(tabName, clickedBtn) {
+            // Проверяем, нажат ли уже активный таб
+            const isAlreadyActive = clickedBtn.classList.contains('active');
+
+            if (isAlreadyActive) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return; // Прерываем выполнение, так как переключать ничего не нужно
+            }
+
+            // Если это новый таб — выполняем логику переключения
+            document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
+            clickedBtn.classList.add('active');
+
+            // Показываем нужные ссылки в скроллере и скрываем ненужные
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.style.display = item.getAttribute('data-tab') === tabName ? 'inline-block' : 'none';
+            });
+
+            // Сбрасываем скролл горизонтального меню в начало
+            document.getElementById('nav-scroller').scrollLeft = 0;
+
+            // Показываем нужный контент исходя из активного таба
+            document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
+            document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
+
+            // переход наверх при смене таба
+            window.scrollTo({ top: 0, behavior: 'auto' });
+
+            // Обновляем расчеты для активной категории
+            setTimeout(() => {
+                updateOffsets();
+                highlightNav();
+            }, 50);
+        }
+
+        let categoryOffsets = [];
+
+        // Функция для расчета позиций категорий (вызываем при загрузке и ресайзе)
+        function updateOffsets() {
+            const activeContainer = document.querySelector('#content-food[style*="block"], #content-bar[style*="block"]');
+            if (!activeContainer) return;
+            categoryOffsets = Array.from(activeContainer.querySelectorAll('.category-title')).map(el => ({
+                id: el.id, top: el.offsetTop - 120 // отступ для навигации
+            }));
+        }
+
+        // Подсветка активной категории при скролле
+        function highlightNav() {
+            const scrollPosition = window.scrollY;
+            const navItems = document.querySelectorAll('.nav-item');
+            let currentActiveId = '';
+
+            if (scrollPosition < 50) {
+                // Очищаем URL от #, если он там есть
+                if (window.location.hash) {
+                    history.replaceState(null, null, window.location.pathname);
+                }
+                navItems.forEach(item => item.classList.remove('active'));
+                return;
+            }
+
+            // Поиск активной категории через готовый массив
+            for (let i = categoryOffsets.length - 1; i >= 0; i--) {
+                if (scrollPosition >= categoryOffsets[i].top) {
+                    currentActiveId = categoryOffsets[i].id;
+                    break;
+                }
+            }
+
+            // Подсвечиваем только нужный пункт
+            navItems.forEach(item => {
+                const isActive = item.getAttribute('href') === `#${currentActiveId}`;
+                item.classList.toggle('active', isActive);
+            });
+        }
+
+        // Оптимизированный слушатель скролла
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    highlightNav();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Обработка ресайза (адрес-бар и прочие мелкие изменения viewport)
+        window.addEventListener('resize', () => {
+            updateOffsets();
+        });
+
+        // Перерисовка модала только при реальном повороте экрана
+        screen.orientation?.addEventListener('change', () => {
+            const modal = document.getElementById('modal');
+            if (getComputedStyle(modal).display === 'flex') {
+                modal.style.display = 'none';
+                modal.offsetHeight;
+                modal.style.display = 'flex';
+            }
+        });
+
+        // Инициализация
+        document.addEventListener("DOMContentLoaded", () => {
+            updateOffsets();
+            highlightNav();
+        });
+        function openModal(card) {
+            const { name, price, weight, imgFull, desc } = card.dataset;
+            const modalBody = document.getElementById('modal-body');
+            document.querySelector('.modal-content').classList.toggle('no-image', !imgFull);
+
+            const imgHTML    = imgFull  ? `<div class="modal-img-wrap"><img src="${imgFull}"></div>` : '';
+            const weightHTML = weight   ? `<div class="weight-badge">${weight}</div>` : '';
+            const priceHTML  = price    ? `<p class="modal-price">${price} ₽</p>` : '';
+            const descHTML   = (desc && desc.trim() !== "") ? `
+                <p class="modal-desc">
+                    <strong style="white-space: nowrap;">Состав:</strong>
+                    <span>${desc}</span>
+                </p>
+            ` : '';
+
+            modalBody.innerHTML = `
+                ${imgHTML}
+                <div class="modal-text">
+                    <h2 class="modal-name">${name}</h2>
+                    ${weightHTML}
+                    ${priceHTML}
+                    ${descHTML}
+                    <button class="modal-btn" onclick="closeModal()">Закрыть</button>
+                </div>
+            `;
+
+            document.getElementById('modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Запрет прокрутки фона
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+
+        async function fetchWithTimeout(url, timeout = 5000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            try {
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(id);
+                return response;
+            } catch (e) {
+                clearTimeout(id);
+                return null;  // Тихо возвращаем null в случае обрыва/таймаута, чтобы цикл в prefetch шел дальше
+            }
+        }
+        // Функция фоновой загрузки всех ресурсов
+        async function prefetchMenuAssets() {
+            if (!navigator.onLine) return;
+
+            const cache = await caches.open(SW_CACHE_NAME);
+
+            const urlsToPrefetch = [];
+            document.querySelectorAll('.product-card').forEach(card => {
+                if (card.dataset.imgThumb) urlsToPrefetch.push(card.dataset.imgThumb);
+                if (card.dataset.imgFull)  urlsToPrefetch.push(card.dataset.imgFull);
+            });
+
+            console.log(`Проверка кэша для ${urlsToPrefetch.length} ресурсов...`);
+
+            const BATCH_SIZE = 6;
+            for (let i = 0; i < urlsToPrefetch.length; i += BATCH_SIZE) {
+                if (!navigator.onLine) break;
+                const batch = urlsToPrefetch.slice(i, i + BATCH_SIZE);
+                await Promise.all(batch.map(async (url) => {
+                    try {
+                        const isCached = await cache.match(url);
+                        if (!isCached) {
+                            const response = await fetchWithTimeout(url, 5000);
+                            if (response && response.ok) {
+                                await cache.put(url, response);
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Ошибка загрузки (возможно, прервано соединение):', url);
+                    }
+                }));
+            }
+            console.log('✅ Фоновое обновление кэша завершено');
+        }
+
+        // Функция, которая находит все "сломанные" картинки и пробует загрузить их заново
+        function retryFailedImages() {
+            console.log("Восстановление отображения картинок...");
+            const images = document.querySelectorAll('img.product-img');
+            images.forEach(img => {
+                // Если картинка не прогрузилась (естественный размер 0)
+                if (!img.complete || img.naturalWidth === 0) {
+                    const originalSrc = img.getAttribute('src');
+                    if (originalSrc) {
+                        // Перезаписываем src тем же значением, чтобы SW отдал файл из кэша
+                        img.src = originalSrc;
+                    }
+                }
+            });
+        }
+
+        // Ждем полной загрузки страницы
+        window.addEventListener('load', () => {
+            // Регистрируем Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log("SW готов"))
+                    .catch(err => console.log("Ошибка SW", err));
+            }
+            // Запускаем фоновую выкачку картинок через 2 секунды
+            // (чтобы не мешать пользователю в первое время)
+            setTimeout(prefetchMenuAssets, 2000);
+        });
+
+        // Обработка возвращения интернета если отключился посредине скачивания в кэш
+        // 1. Докачиваем в кэш
+        // 2. Обновляем битые картинки на экране
+        window.addEventListener('online', async () => {
+            console.log('Сеть восстановлена, докачиваю ресурсы...');
+            // Даем браузеру 1 секунду "продышаться" и запускаем восстановление
+            setTimeout(async () => {
+                await prefetchMenuAssets();
+                retryFailedImages();
+            }, 1000);
+        });
+
+    </script>
+</body>
+
+</html>

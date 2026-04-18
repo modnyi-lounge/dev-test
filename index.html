@@ -31,6 +31,8 @@
 
         body {
             font-family: -apple-system, system-ui, sans-serif;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
             margin: 0;
             background: var(--bg);
             color: var(--text);
@@ -310,6 +312,7 @@
             font-size: 22px;
             color: var(--text);
             z-index: 100;
+            transform: translateZ(0);
         }
 
         .modal-btn {
@@ -535,7 +538,7 @@
     </div>
 
     <div class="container">
-        <div id="content-food"><h2 id="cat-салаты" class="category-title">Салаты</h2>
+        <div id="content-food" style="display: block"><h2 id="cat-салаты" class="category-title">Салаты</h2>
 <div class="menu-grid">
             <div class="product-card" onclick="openModal(this)"
                  data-name="Салат с морепродуктами" data-price="1290"

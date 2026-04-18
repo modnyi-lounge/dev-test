@@ -31,6 +31,8 @@
 
         body {
             font-family: -apple-system, system-ui, sans-serif;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
             margin: 0;
             background: var(--bg);
             color: var(--text);
@@ -310,6 +312,7 @@
             font-size: 22px;
             color: var(--text);
             z-index: 100;
+            transform: translateZ(0);
         }
 
         .modal-btn {
@@ -535,7 +538,7 @@
     </div>
 
     <div class="container">
-        <div id="content-food">{sections_food}</div>
+        <div id="content-food" style="display: block">{sections_food}</div>
         <div id="content-bar" style="display: none;">{sections_bar}</div>
     </div>
 

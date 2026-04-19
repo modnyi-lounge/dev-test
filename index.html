@@ -3172,6 +3172,9 @@
     <script>
         const SW_CACHE_NAME = 'modnyi-v2'; // Должно совпадать с CACHE_NAME в sw.js
 
+        const scrollPositions = { food: 0, bar: 0 };
+        let currentTab = 'food';
+
         function switchTab(tabName, clickedBtn) {
             // Проверяем, нажат ли уже активный таб
             const isAlreadyActive = clickedBtn.classList.contains('active');
@@ -3180,6 +3183,10 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 return; // Прерываем выполнение, так как переключать ничего не нужно
             }
+
+            // Сохраняем позицию скролла текущего таба
+            scrollPositions[currentTab] = window.scrollY;
+            currentTab = tabName;
 
             // Если это новый таб — выполняем логику переключения
             document.querySelectorAll('.main-tab').forEach(btn => btn.classList.remove('active'));
@@ -3197,8 +3204,8 @@
             document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
             document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
 
-            // переход наверх при смене таба
-            window.scrollTo({ top: 0, behavior: 'auto' });
+            // Восстанавливаем позицию скролла мгновенно (instant игнорирует scroll-behavior: smooth из CSS)
+            window.scrollTo({ top: scrollPositions[tabName], behavior: 'instant' });
 
             // Обновляем расчеты для активной категории
             setTimeout(() => {

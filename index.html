@@ -3184,7 +3184,8 @@
             }
 
             // Сохраняем позицию скролла текущего таба
-            scrollPositions[currentTab] = window.scrollY;
+            const prevScrollY = window.scrollY;
+            scrollPositions[currentTab] = prevScrollY;
             currentTab = tabName;
 
             // Если это новый таб — выполняем логику переключения
@@ -3207,8 +3208,13 @@
             document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
             document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
 
+            // Если уходим с таба где шапка уже залипла, а на новом табе лого ещё видно — подтягиваем до порога
+            const logoHeight = document.querySelector('header').offsetHeight;
+            const savedPos = scrollPositions[tabName];
+            const restorePos = (prevScrollY >= logoHeight && savedPos < logoHeight) ? logoHeight : savedPos;
+
             // Восстанавливаем позицию скролла (2-аргументная форма — всегда мгновенная, лучшая совместимость с iOS)
-            window.scrollTo(0, scrollPositions[tabName]);
+            window.scrollTo(0, restorePos);
 
             // Двойной rAF: первый — браузер применяет scroll, второй — показываем контент
             requestAnimationFrame(() => requestAnimationFrame(() => {

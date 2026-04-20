@@ -3200,18 +3200,23 @@
             // Сбрасываем скролл горизонтального меню в начало
             document.getElementById('nav-scroller').scrollLeft = 0;
 
+            // Скрываем контейнер на один кадр, чтобы iOS не показал контент под шапкой
+            const container = document.querySelector('.container');
+            container.style.visibility = 'hidden';
+
             // Показываем нужный контент исходя из активного таба
             document.getElementById('content-food').style.display = tabName === 'food' ? 'block' : 'none';
             document.getElementById('content-bar').style.display = tabName === 'bar' ? 'block' : 'none';
 
-            // Восстанавливаем позицию скролла мгновенно (instant игнорирует scroll-behavior: smooth из CSS)
-            window.scrollTo({ top: scrollPositions[tabName], behavior: 'instant' });
+            // Восстанавливаем позицию скролла (2-аргументная форма — всегда мгновенная, лучшая совместимость с iOS)
+            window.scrollTo(0, scrollPositions[tabName]);
 
-            // Обновляем расчеты для активной категории
-            setTimeout(() => {
+            // После того как браузер применил layout — показываем контент и пересчитываем
+            requestAnimationFrame(() => {
+                container.style.visibility = '';
                 updateOffsets();
                 highlightNav();
-            }, 50);
+            });
         }
 
         let categoryOffsets = [];

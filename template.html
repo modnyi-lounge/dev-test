@@ -25,9 +25,6 @@
             --inactive: #8c7f70;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
 
         body {
             font-family: -apple-system, system-ui, sans-serif;
@@ -745,6 +742,15 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
+        });
+
+        // Плавный скролл только для навигации по категориям
+        document.getElementById('nav-scroller').addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            e.preventDefault();
+            const target = document.querySelector(navItem.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
 

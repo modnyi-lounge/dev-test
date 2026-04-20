@@ -57,6 +57,8 @@
             top: 0;
             z-index: 100;
             background: var(--bg);
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         .main-tabs {
@@ -3208,12 +3210,12 @@
             // Восстанавливаем позицию скролла (2-аргументная форма — всегда мгновенная, лучшая совместимость с iOS)
             window.scrollTo(0, scrollPositions[tabName]);
 
-            // После того как браузер применил layout — показываем контент и пересчитываем
-            requestAnimationFrame(() => {
+            // Двойной rAF: первый — браузер применяет scroll, второй — показываем контент
+            requestAnimationFrame(() => requestAnimationFrame(() => {
                 container.style.visibility = '';
                 updateOffsets();
                 highlightNav();
-            });
+            }));
         }
 
         let categoryOffsets = [];
